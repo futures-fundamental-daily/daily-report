@@ -1,0 +1,95 @@
+{
+  "version": "v1.0",
+  "created": "2026-07-08",
+  "products": [
+    {"code": "PS", "name": "多晶硅", "exchange": "广期所", "sector": "新能源"},
+    {"code": "RM", "name": "菜粕", "exchange": "郑商所", "sector": "农产品"},
+    {"code": "PB", "name": "铅", "exchange": "上期所", "sector": "有色金属"},
+    {"code": "RB", "name": "螺纹钢", "exchange": "上期所", "sector": "黑色系"},
+    {"code": "SC", "name": "原油", "exchange": "上期能源", "sector": "能源化工"},
+    {"code": "M", "name": "豆粕", "exchange": "大商所", "sector": "农产品"},
+    {"code": "I", "name": "铁矿石", "exchange": "大商所", "sector": "黑色系"},
+    {"code": "CU", "name": "铜", "exchange": "上期所", "sector": "有色金属"},
+    {"code": "P", "name": "棕榈油", "exchange": "大商所", "sector": "农产品"},
+    {"code": "SA", "name": "纯碱", "exchange": "郑商所", "sector": "能源化工"}
+  ],
+  "data_sources": {
+    "futures_quote": {
+      "type": "exchange_api",
+      "sources": ["大商所", "上期所", "郑商所", "广期所"],
+      "fields": ["close", "change_pct", "volume", "open_interest"],
+      "schedule": "15:35"
+    },
+    "inventory": {
+      "type": "mixed",
+      "sources": ["交易所仓单日报", "我的钢铁网", "卓创资讯"],
+      "fields": ["inventory", "wow_change", "yoy_change"],
+      "schedule": "16:00"
+    },
+    "spot_price": {
+      "type": "info_platform",
+      "sources": ["生意社", "SMM", "钢联数据"],
+      "fields": ["spot_price", "basis"],
+      "schedule": "15:30"
+    },
+    "macro": {
+      "type": "official",
+      "sources": ["国家统计局", "央行", "海关总署"],
+      "fields": ["CPI", "PPI", "PMI", "trade", "interest_rate"],
+      "schedule": "data_release"
+    },
+    "news": {
+      "type": "media",
+      "sources": ["行业网站头条"],
+      "fields": ["policy", "capacity", "supply_demand"],
+      "schedule": "15:30"
+    }
+  },
+  "analysis": {
+    "dimensions": [
+      {"name": "价格位置", "weight": 0.20},
+      {"name": "动量趋势", "weight": 0.20},
+      {"name": "基本面", "weight": 0.30},
+      {"name": "宏观环境", "weight": 0.20},
+      {"name": "资金流向", "weight": 0.10}
+    ],
+    "bonus": [
+      {"condition": "价格处于历史极低/极高位置", "score": 1.0},
+      {"condition": "动量与基本面共振", "score": 1.0},
+      {"condition": "板块整体同向", "score": 0.5}
+    ],
+    "penalty": [
+      {"condition": "量价背离", "score": -1.0},
+      {"condition": "宏观逆风", "score": -1.0},
+      {"condition": "数据缺失/异常", "score": -0.5}
+    ]
+  },
+  "risk_rules": [
+    "价格涨 + 持仓数据缺失",
+    "新能源品种产能过剩背景未变",
+    "当前上涨为反弹性质，基本面未确认改善",
+    "多头获利了结信号（持仓减少 + 价格上涨）"
+  ],
+  "github": {
+    "repo": "futures-fundamental-daily/daily-report",
+    "branch": "main",
+    "output_file": "index.html",
+    "archive_dir": "archive",
+    "commit_prefix": "daily:"
+  },
+  "schedule": {
+    "auto_run": "16:30",
+    "retry_times": 3,
+    "retry_interval_minutes": 5
+  },
+  "visual": {
+    "bg_color": "#0d1117",
+    "card_bg": "#161b22",
+    "bull_color": "#ff4444",
+    "sector_color": "#1f6feb",
+    "score_color": "#f0883e",
+    "risk_color": "#d29922",
+    "up_color": "#ff4444",
+    "down_color": "#3fb950"
+  }
+}

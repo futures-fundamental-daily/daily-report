@@ -1,0 +1,47 @@
+name: Daily Futures Report
+
+on:
+  schedule:
+    # 工作日 16:30 UTC+8 = 08:30 UTC
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      mock:
+        description: '使用模拟数据'
+        required: false
+        default: 'false'
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests
+        
+    - name: Generate report
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if [ "${{ github.event.inputs.mock }}" == "true" ]; then
+          python scripts/main.py --mock
+        else
+          python scripts/main.py
+        fi
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./output
+        publish_branch: gh-pages
