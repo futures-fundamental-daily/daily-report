@@ -1,0 +1,258 @@
+{
+  "PS": {
+    "stocks": [
+      {
+        "name": "隆基绿能",
+        "code": "601012.SH",
+        "close": 56.39,
+        "change_pct": -1.42,
+        "weight": 0.35
+      },
+      {
+        "name": "通威股份",
+        "code": "600438.SH",
+        "close": 48.53,
+        "change_pct": -2.0,
+        "weight": 0.35
+      },
+      {
+        "name": "大全能源",
+        "code": "688303.SH",
+        "close": 30.77,
+        "change_pct": 3.94,
+        "weight": 0.3
+      }
+    ],
+    "sector_avg_change": -0.01,
+    "sector_direction": "震荡"
+  },
+  "RM": {
+    "stocks": [
+      {
+        "name": "金龙鱼",
+        "code": "300999.SZ",
+        "close": 32.21,
+        "change_pct": 3.19,
+        "weight": 0.5
+      },
+      {
+        "name": "海大集团",
+        "code": "002311.SZ",
+        "close": 71.98,
+        "change_pct": 0.94,
+        "weight": 0.5
+      }
+    ],
+    "sector_avg_change": 2.06,
+    "sector_direction": "强势"
+  },
+  "PB": {
+    "stocks": [
+      {
+        "name": "豫光金铅",
+        "code": "600531.SH",
+        "close": 27.93,
+        "change_pct": 3.89,
+        "weight": 0.4
+      },
+      {
+        "name": "驰宏锌锗",
+        "code": "600497.SH",
+        "close": 70.55,
+        "change_pct": -0.18,
+        "weight": 0.35
+      },
+      {
+        "name": "中金岭南",
+        "code": "000060.SZ",
+        "close": 67.01,
+        "change_pct": 2.06,
+        "weight": 0.25
+      }
+    ],
+    "sector_avg_change": 2.01,
+    "sector_direction": "强势"
+  },
+  "RB": {
+    "stocks": [
+      {
+        "name": "宝钢股份",
+        "code": "600019.SH",
+        "close": 34.64,
+        "change_pct": 2.05,
+        "weight": 0.4
+      },
+      {
+        "name": "华菱钢铁",
+        "code": "000932.SZ",
+        "close": 46.87,
+        "change_pct": -0.44,
+        "weight": 0.35
+      },
+      {
+        "name": "鞍钢股份",
+        "code": "000898.SZ",
+        "close": 79.89,
+        "change_pct": -1.92,
+        "weight": 0.25
+      }
+    ],
+    "sector_avg_change": 0.19,
+    "sector_direction": "震荡"
+  },
+  "SC": {
+    "stocks": [
+      {
+        "name": "中国石油",
+        "code": "601857.SH",
+        "close": 60.25,
+        "change_pct": -0.54,
+        "weight": 0.35
+      },
+      {
+        "name": "中国石化",
+        "code": "600028.SH",
+        "close": 98.76,
+        "change_pct": 2.43,
+        "weight": 0.35
+      },
+      {
+        "name": "中国海油",
+        "code": "600938.SH",
+        "close": 15.76,
+        "change_pct": 3.24,
+        "weight": 0.3
+      }
+    ],
+    "sector_avg_change": 1.63,
+    "sector_direction": "强势"
+  },
+  "M": {
+    "stocks": [
+      {
+        "name": "牧原股份",
+        "code": "002714.SZ",
+        "close": 19.44,
+        "change_pct": -0.29,
+        "weight": 0.4
+      },
+      {
+        "name": "温氏股份",
+        "code": "300498.SZ",
+        "close": 88.5,
+        "change_pct": 0.59,
+        "weight": 0.35
+      },
+      {
+        "name": "新希望",
+        "code": "000876.SZ",
+        "close": 22.18,
+        "change_pct": 3.45,
+        "weight": 0.25
+      }
+    ],
+    "sector_avg_change": 0.95,
+    "sector_direction": "震荡"
+  },
+  "I": {
+    "stocks": [
+      {
+        "name": "河钢股份",
+        "code": "000709.SZ",
+        "close": 58.32,
+        "change_pct": 3.28,
+        "weight": 0.35
+      },
+      {
+        "name": "鞍钢股份",
+        "code": "000898.SZ",
+        "close": 64.93,
+        "change_pct": -2.75,
+        "weight": 0.35
+      },
+      {
+        "name": "方大炭素",
+        "code": "600516.SH",
+        "close": 11.74,
+        "change_pct": 2.18,
+        "weight": 0.3
+      }
+    ],
+    "sector_avg_change": 0.84,
+    "sector_direction": "震荡"
+  },
+  "CU": {
+    "stocks": [
+      {
+        "name": "江西铜业",
+        "code": "600362.SH",
+        "close": 95.85,
+        "change_pct": 2.12,
+        "weight": 0.35
+      },
+      {
+        "name": "云南铜业",
+        "code": "000878.SZ",
+        "close": 42.15,
+        "change_pct": -0.87,
+        "weight": 0.35
+      },
+      {
+        "name": "紫金矿业",
+        "code": "601899.SH",
+        "close": 98.48,
+        "change_pct": -1.22,
+        "weight": 0.3
+      }
+    ],
+    "sector_avg_change": 0.07,
+    "sector_direction": "震荡"
+  },
+  "P": {
+    "stocks": [
+      {
+        "name": "金龙鱼",
+        "code": "300999.SZ",
+        "close": 65.94,
+        "change_pct": -2.76,
+        "weight": 0.5
+      },
+      {
+        "name": "西王食品",
+        "code": "000639.SZ",
+        "close": 31.08,
+        "change_pct": -0.78,
+        "weight": 0.5
+      }
+    ],
+    "sector_avg_change": -1.77,
+    "sector_direction": "弱势"
+  },
+  "SA": {
+    "stocks": [
+      {
+        "name": "远兴能源",
+        "code": "000683.SZ",
+        "close": 36.01,
+        "change_pct": 3.49,
+        "weight": 0.4
+      },
+      {
+        "name": "三友化工",
+        "code": "600409.SH",
+        "close": 46.9,
+        "change_pct": -2.97,
+        "weight": 0.35
+      },
+      {
+        "name": "山东海化",
+        "code": "000822.SZ",
+        "close": 77.11,
+        "change_pct": 1.74,
+        "weight": 0.25
+      }
+    ],
+    "sector_avg_change": 0.79,
+    "sector_direction": "震荡"
+  }
+}

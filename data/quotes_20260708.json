@@ -1,0 +1,82 @@
+{
+  "PS": {
+    "close": 38178.6,
+    "change_pct": 0.47,
+    "volume": 544424,
+    "open_interest": 493179,
+    "contract": "PS2509",
+    "date": "20260708"
+  },
+  "RM": {
+    "close": 2794.4,
+    "change_pct": -0.2,
+    "volume": 2203482,
+    "open_interest": 265827,
+    "contract": "RM2509",
+    "date": "20260708"
+  },
+  "PB": {
+    "close": 19133.4,
+    "change_pct": -1.88,
+    "volume": 707147,
+    "open_interest": 439151,
+    "contract": "PB2509",
+    "date": "20260708"
+  },
+  "RB": {
+    "close": 3668.04,
+    "change_pct": 1.89,
+    "volume": 4135968,
+    "open_interest": 416766,
+    "contract": "RB2509",
+    "date": "20260708"
+  },
+  "SC": {
+    "close": 601.0,
+    "change_pct": 3.62,
+    "volume": 734696,
+    "open_interest": 488170,
+    "contract": "SC2509",
+    "date": "20260708"
+  },
+  "M": {
+    "close": 3213.12,
+    "change_pct": 0.41,
+    "volume": 4644595,
+    "open_interest": 439428,
+    "contract": "M2509",
+    "date": "20260708"
+  },
+  "I": {
+    "close": 880.35,
+    "change_pct": 3.57,
+    "volume": 3635369,
+    "open_interest": 278082,
+    "contract": "I2509",
+    "date": "20260708"
+  },
+  "CU": {
+    "close": 80363.4,
+    "change_pct": 3.03,
+    "volume": 911375,
+    "open_interest": 171870,
+    "contract": "CU2509",
+    "date": "20260708"
+  },
+  "P": {
+    "close": 7965.36,
+    "change_pct": 2.12,
+    "volume": 2347924,
+    "open_interest": 496746,
+    "contract": "P2509",
+    "date": "20260708"
+  },
+  "SA": {
+    "close": 2204.84,
+    "change_pct": 0.22,
+    "volume": 1362872,
+    "open_interest": 321797,
+    "contract": "SA2509",
+    "date": "20260708"
+  }
+}

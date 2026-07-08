@@ -33,32 +33,36 @@ def push_to_github():
     
     print(f"[{datetime.now()}] 开始推送到GitHub...")
     
+    # 检测是否在GitHub Actions中
+    in_actions = os.environ.get("GITHUB_ACTIONS", "") == "true"
+    
     # 检查git是否初始化
     git_dir = BASE_DIR / ".git"
     if not git_dir.exists():
         print("[INFO] Git仓库未初始化，正在初始化...")
         subprocess.run(["git", "init"], cwd=BASE_DIR, check=True)
     
-    # 检查远程仓库
-    try:
-        result = subprocess.run(
-            ["git", "remote", "get-url", "origin"],
-            cwd=BASE_DIR, capture_output=True, text=True
-        )
-        if result.returncode != 0:
-            print("[INFO] 添加远程仓库...")
-            # 使用GITHUB_TOKEN环境变量
-            token = os.environ.get("GITHUB_TOKEN", "")
-            if token:
-                remote_url = f"https://{token}@github.com/{repo}.git"
-            else:
-                remote_url = f"https://github.com/{repo}.git"
-            subprocess.run(
-                ["git", "remote", "add", "origin", remote_url],
-                cwd=BASE_DIR, check=True
+    # 检查远程仓库（本地环境需要手动配置）
+    if not in_actions:
+        try:
+            result = subprocess.run(
+                ["git", "remote", "get-url", "origin"],
+                cwd=BASE_DIR, capture_output=True, text=True
             )
-    except Exception as e:
-        print(f"[WARN] 检查远程仓库失败: {e}")
+            if result.returncode != 0:
+                print("[INFO] 添加远程仓库...")
+                # 使用GITHUB_TOKEN环境变量
+                token = os.environ.get("GITHUB_TOKEN", "")
+                if token:
+                    remote_url = f"https://{token}@github.com/{repo}.git"
+                else:
+                    remote_url = f"https://github.com/{repo}.git"
+                subprocess.run(
+                    ["git", "remote", "add", "origin", remote_url],
+                    cwd=BASE_DIR, check=True
+                )
+        except Exception as e:
+            print(f"[WARN] 检查远程仓库失败: {e}")
     
     # 复制output/index.html到根目录（GitHub Pages需要）
     src = OUTPUT_DIR / "index.html"
@@ -82,10 +86,17 @@ def push_to_github():
     
     # 推送
     try:
-        subprocess.run(
-            ["git", "push", "origin", f"HEAD:{branch}"],
-            cwd=BASE_DIR, check=True
-        )
+        if in_actions:
+            # Actions中actions/checkout已配置好凭证
+            subprocess.run(
+                ["git", "push", "origin", f"HEAD:{branch}"],
+                cwd=BASE_DIR, check=True
+            )
+        else:
+            subprocess.run(
+                ["git", "push", "origin", f"HEAD:{branch}"],
+                cwd=BASE_DIR, check=True
+            )
         print(f"[{datetime.now()}] 推送成功: {commit_msg}")
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] 推送失败: {e}")
