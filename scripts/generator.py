@@ -587,9 +587,9 @@ def generate_html():
         
         @media (max-width: 600px) {{
             .container {{ padding: 12px; }}
-            header {{ padding: 8px 0; margin-bottom: 8px; border-bottom: 1px solid #30363d; }}
-            h1 {{ font-size: 16px; display: inline; margin-right: 8px; }}
-            .subtitle {{ font-size: 12px; display: inline; color: #8b949e; }}
+            header {{ display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; padding: 8px 0; margin-bottom: 8px; border-bottom: 1px solid #30363d; }}
+            h1 {{ font-size: 15px; margin: 0; margin-right: 8px; white-space: nowrap; flex-shrink: 0; }}
+            .subtitle {{ font-size: 11px; color: #8b949e; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
             .controls {{ display: none; }}
             .filter-bar {{ display: none; }}
             .cards-container {{ margin-top: 0; }}
