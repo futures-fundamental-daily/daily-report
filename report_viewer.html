@@ -239,15 +239,16 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
   border-bottom: 1px solid var(--border);
   background: var(--card-bg);
   overflow-x: auto;
-  white-space: nowrap;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding: 10px 8px;
   align-items: center;
+  flex-wrap: nowrap;
 }
 .mobile-date-bar::-webkit-scrollbar { display: none; }
 .mobile-date-bar .date-bar-btn {
-  display: inline-flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   min-width: 64px; height: 52px; border-radius: 10px; margin-right: 8px;
   background: var(--bg); border: 1px solid var(--border); color: var(--accent);
   font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
@@ -255,7 +256,7 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
 }
 .mobile-date-bar .date-bar-btn:hover { border-color: var(--accent); background: rgba(212,168,83,0.1); }
 .mobile-date-item {
-  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-width: 48px; height: 52px; border-radius: 10px; margin-right: 6px;
   cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
   position: relative; flex-shrink: 0;
@@ -303,8 +304,8 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
 .bottom-cal-item.has-report .day, .bottom-cal-item.active .day { color: inherit; opacity: 0.7; }
 
 @media (max-width: 768px) {
-  .bottom-cal-bar { display: block; }
-  body.fullscreen .bottom-cal-bar { display: none; }
+  .bottom-cal-bar { display: none !important; }
+  body.fullscreen .bottom-cal-bar { display: none !important; }
 }
 </style>
 </head>
