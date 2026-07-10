@@ -161,19 +161,28 @@ body {
 
 /* Responsive */
 @media (max-width: 640px) {
-  .container { padding: 12px; }
-  .header { padding: 16px 0 14px; }
+  .container { padding: 10px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 0 12px; }
   .header-left { width: 100%; }
-  .header-title { font-size: 17px; }
-  .report-item { flex-wrap: wrap; gap: 10px; }
-  .date-badge { min-width: 48px; padding: 6px 8px; }
-  .date-day { font-size: 16px; }
-  .report-info { width: 100%; order: 3; }
-  .count-pills { order: 2; }
-  .btn-view { order: 4; width: 100%; justify-content: center; }
+  .header-title { font-size: 16px; }
+  .btn-back { font-size: 12px; padding: 6px 12px; }
+  .search-bar { margin-bottom: 12px; }
+  .search-box input { font-size: 14px; padding: 10px 12px 10px 36px; }
   .stats-bar { gap: 8px; }
-  .stat-card { min-width: 100px; padding: 10px 12px; }
+  .stat-card { min-width: 0; flex: 1 1 calc(50% - 4px); padding: 10px 12px; }
   .stat-value { font-size: 18px; }
+  .report-item { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .date-badge { min-width: 44px; padding: 5px 8px; }
+  .date-day { font-size: 15px; }
+  .report-info { width: 100%; order: 3; }
+  .report-title { font-size: 14px; margin-bottom: 4px; }
+  .report-meta { gap: 4px; }
+  .meta-tag { font-size: 11px; padding: 2px 8px; }
+  .count-pills { order: 2; }
+  .count-pill { font-size: 11px; padding: 3px 8px; }
+  .btn-view { order: 4; width: 100%; justify-content: center; padding: 8px; font-size: 13px; }
+  .pagination { gap: 4px; }
+  .page-btn { min-width: 32px; height: 32px; font-size: 13px; }
 }
 </style>
 </head>

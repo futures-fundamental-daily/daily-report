@@ -480,16 +480,24 @@ function loadReport(date) {
   const loading = document.getElementById('loading');
 
   loading.style.display = 'flex';
-  frame.style.display = 'none';
+  frame.style.visibility = 'hidden';
 
   frame.src = ARCHIVE_PATH + report.filename;
   frame.onload = () => {
     loading.style.display = 'none';
-    frame.style.display = 'block';
+    frame.style.visibility = 'visible';
   };
   frame.onerror = () => {
     loading.innerHTML = '<div style="color:var(--text-muted)">加载失败</div>';
   };
+
+  // Fallback: if onload doesn't fire within 5s, show anyway
+  setTimeout(() => {
+    if (loading.style.display !== 'none') {
+      loading.style.display = 'none';
+      frame.style.visibility = 'visible';
+    }
+  }, 5000);
 
   // Update UI
   document.getElementById('toolbarDate').innerHTML =
