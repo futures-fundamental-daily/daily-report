@@ -12,7 +12,7 @@ __pycache__/
 data/
 analysis/
 output/
-archive/
+# archive/  # 日报归档需要推送到GitHub Pages
 
 # IDE
 .vscode/

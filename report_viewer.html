@@ -53,6 +53,20 @@ body {
 .logo-text { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
 .logo-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
+/* Header Actions */
+.header-actions {
+  display: flex; gap: 8px; margin-top: 10px;
+}
+.header-actions a {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--text-muted); padding: 5px 10px; border-radius: 6px;
+  font-size: 12px; text-decoration: none; transition: all 0.2s;
+}
+.header-actions a:hover {
+  border-color: var(--accent); color: var(--accent); background: rgba(212,168,83,0.05);
+}
+
 /* Search */
 .search-box {
   position: relative; margin-top: 4px;
@@ -267,6 +281,10 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" id="searchInput" placeholder="搜索品种、日期..." oninput="onSearch()">
+      </div>
+      <div class="header-actions">
+        <a href="report_list.html" target="_blank">📋 历史总览</a>
+        <a href="./" target="_blank">📄 最新日报</a>
       </div>
     </div>
 
