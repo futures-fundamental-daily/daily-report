@@ -587,13 +587,12 @@ def generate_html():
         
         @media (max-width: 600px) {{
             .container {{ padding: 12px; }}
-            header {{ padding: 16px 0; margin-bottom: 16px; }}
-            h1 {{ font-size: 20px; }}
-            .subtitle {{ font-size: 12px; }}
-            .controls {{ gap: 8px; margin-bottom: 12px; }}
-            .btn {{ padding: 6px 14px; font-size: 13px; }}
-            .filter-bar {{ gap: 6px; margin-bottom: 12px; }}
-            .filter-btn {{ padding: 5px 10px; font-size: 12px; }}
+            header {{ padding: 8px 0; margin-bottom: 8px; border-bottom: 1px solid #30363d; }}
+            h1 {{ font-size: 16px; display: inline; margin-right: 8px; }}
+            .subtitle {{ font-size: 12px; display: inline; color: #8b949e; }}
+            .controls {{ display: none; }}
+            .filter-bar {{ display: none; }}
+            .cards-container {{ margin-top: 0; }}
             .card {{ margin-bottom: 10px; border-radius: 8px; }}
             .card-header {{ padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 6px; }}
             .card-header::after {{ align-self: flex-end; margin-top: -20px; }}
@@ -624,7 +623,7 @@ def generate_html():
             .sector-avg {{ font-size: 13px; padding: 6px 10px; }}
             .stocks-list {{ grid-template-columns: repeat(2, 1fr); gap: 6px; }}
             .stock-item {{ padding: 6px 10px; font-size: 12px; }}
-            footer {{ padding: 16px 0; margin-top: 16px; font-size: 11px; }}
+            footer {{ padding: 12px 0; margin-top: 12px; font-size: 11px; }}
         }}
     </style>
 </head>

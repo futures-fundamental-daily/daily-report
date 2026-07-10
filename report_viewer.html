@@ -486,6 +486,24 @@ function loadReport(date) {
   frame.onload = () => {
     loading.style.display = 'none';
     frame.style.visibility = 'visible';
+    // Inject mobile header simplification for old reports
+    try {
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      if (doc && !doc.getElementById('mobile-header-fix')) {
+        const style = doc.createElement('style');
+        style.id = 'mobile-header-fix';
+        style.textContent = `@media (max-width: 600px) {
+          header { padding: 8px 0 !important; margin-bottom: 8px !important; border-bottom: 1px solid #30363d !important; }
+          h1 { font-size: 16px !important; display: inline !important; margin-right: 8px !important; }
+          .subtitle { font-size: 12px !important; display: inline !important; color: #8b949e !important; }
+          .controls { display: none !important; }
+          .filter-bar { display: none !important; }
+          .cards-container { margin-top: 0 !important; }
+          footer { padding: 12px 0 !important; margin-top: 12px !important; }
+        }`;
+        doc.head.appendChild(style);
+      }
+    } catch(e) {}
   };
   frame.onerror = () => {
     loading.innerHTML = '<div style="color:var(--text-muted)">加载失败</div>';

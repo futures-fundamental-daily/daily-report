@@ -392,13 +392,12 @@
         
         @media (max-width: 600px) {
             .container { padding: 12px; }
-            header { padding: 16px 0; margin-bottom: 16px; }
-            h1 { font-size: 20px; }
-            .subtitle { font-size: 12px; }
-            .controls { gap: 8px; margin-bottom: 12px; }
-            .btn { padding: 6px 14px; font-size: 13px; }
-            .filter-bar { gap: 6px; margin-bottom: 12px; }
-            .filter-btn { padding: 5px 10px; font-size: 12px; }
+            header { padding: 8px 0; margin-bottom: 8px; border-bottom: 1px solid #30363d; }
+            h1 { font-size: 16px; display: inline; margin-right: 8px; }
+            .subtitle { font-size: 12px; display: inline; color: #8b949e; }
+            .controls { display: none; }
+            .filter-bar { display: none; }
+            .cards-container { margin-top: 0; }
             .card { margin-bottom: 10px; border-radius: 8px; }
             .card-header { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 6px; }
             .card-header::after { align-self: flex-end; margin-top: -20px; }
@@ -429,7 +428,7 @@
             .sector-avg { font-size: 13px; padding: 6px 10px; }
             .stocks-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
             .stock-item { padding: 6px 10px; font-size: 12px; }
-            footer { padding: 16px 0; margin-top: 16px; font-size: 11px; }
+            footer { padding: 12px 0; margin-top: 12px; font-size: 11px; }
         }
     </style>
 </head>
@@ -437,7 +436,7 @@
     <div class="container">
         <header>
             <h1>期货基本面日报</h1>
-            <div class="subtitle">2026-07-10 14:36 | 基于多维度量化分析</div>
+            <div class="subtitle">2026-07-10 15:18 | 基于多维度量化分析</div>
         </header>
         
         <div class="controls">
@@ -1230,7 +1229,7 @@
         
         <footer>
             <p>⚠️ 本报告基于公开信息整理，仅供参考，不构成投资建议。</p>
-            <p>数据更新时间：2026-07-10 14:36</p>
+            <p>数据更新时间：2026-07-10 15:18</p>
         </footer>
     </div>
     
