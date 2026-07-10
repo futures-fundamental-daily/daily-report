@@ -15,7 +15,7 @@ sys.path.insert(0, str(BASE_DIR / "scripts"))
 from fetcher import fetch_all_quotes, fetch_mock_data
 from analyzer import analyze_all
 from generator import generate_html
-from pusher import push_to_github, push_local
+from pusher import push_all, push_local
 
 
 def run_pipeline(mock=False, local=False):
@@ -40,12 +40,12 @@ def run_pipeline(mock=False, local=False):
     print("\n[3/4] 生成HTML报告...")
     generate_html()
     
-    # 4. Git推送
+    # 4. 推送报告
     print("\n[4/4] 推送报告...")
     if local:
         push_local()
     else:
-        push_to_github()
+        push_all()
     
     print("\n" + "=" * 60)
     print("✅ 流水线执行完毕")
