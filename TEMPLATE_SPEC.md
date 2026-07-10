@@ -199,7 +199,214 @@
 
 ---
 
-## 5. 交互脚本 (JavaScript)
+## 5. report_viewer.html 查阅中心规范
+
+### 5.1 布局结构
+```
+.app (flex, height: 100vh)
+  ├── .sidebar (固定宽度 280px, 可折叠)
+  │   ├── .sidebar-header (Logo + 搜索)
+  │   ├── .sidebar-scroll (日历 + 最近报告 + 板块筛选 + 收藏)
+  │   └── .sidebar-footer (快捷键提示)
+  └── .main (flex: 1, flex-direction: column)
+      ├── .toolbar (日期、方向、操作按钮)
+      ├── .mobile-date-bar (移动端顶部日期条, display: none 默认)
+      └── .content (flex: 1, position: relative)
+          ├── .loading (绝对定位遮罩)
+          └── iframe (加载日报)
+```
+
+### 5.2 移动端适配 (@media max-width: 768px)
+
+**必须执行以下规则：**
+
+```css
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+    transform: translateX(-100%); width: 280px; }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .mobile-toggle { display: flex; }  /* 右下角悬浮菜单按钮 */
+  .toolbar { display: none; }       /* 隐藏 toolbar */
+  .keyboard-hint { display: none; }
+  .mobile-date-bar { display: flex; } /* 显示顶部日期条 */
+  .bottom-cal-bar { display: none !important; } /* 彻底隐藏底部日历条 */
+}
+```
+
+### 5.3 移动端顶部日期条 (.mobile-date-bar)
+
+```css
+.mobile-date-bar {
+  display: none;
+  height: 72px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-bg);
+  overflow-x: auto;
+  overflow-y: hidden;          /* 禁止垂直滚动 */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 10px 8px;
+  align-items: center;
+  flex-wrap: nowrap;           /* 禁止换行 */
+}
+.mobile-date-bar::-webkit-scrollbar { display: none; }
+
+/* 总览按钮 */
+.mobile-date-bar .date-bar-btn {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 64px; height: 52px; border-radius: 10px; margin-right: 8px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--accent);
+  font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+}
+
+/* 日期项 */
+.mobile-date-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 48px; height: 52px; border-radius: 10px; margin-right: 6px;
+  cursor: pointer; border: 1px solid transparent; flex-shrink: 0; position: relative;
+}
+.mobile-date-item .d-week { font-size: 10px; color: var(--text-muted); }
+.mobile-date-item .d-num { font-size: 15px; font-weight: 700; color: var(--text); }
+.mobile-date-item.has-report { border-color: var(--accent); }
+.mobile-date-item.has-report .d-num { color: var(--accent); }
+.mobile-date-item.active { background: var(--accent); border-color: var(--accent); }
+.mobile-date-item.active .d-week, .mobile-date-item.active .d-num { color: #0d1117; }
+.mobile-date-item.today::after {
+  content: ''; position: absolute; bottom: 3px; width: 4px; height: 4px;
+  background: var(--accent); border-radius: 50%;
+}
+```
+
+**日期条渲染规则：**
+- 显示今天前后15天（共31天）
+- 有报告的日子金色边框高亮
+- 当前选中的日子金色背景填充
+- 无报告的日子变灰（opacity: 0.3）且不可点击
+- 切换报告时自动滚动居中
+
+### 5.4 iframe 加载策略
+
+**禁止**使用 `display: none` 或 `visibility: hidden` 隐藏 iframe，这会导致移动端滚动失效。
+
+**正确做法：** iframe 始终可见，用 loading 遮罩层覆盖：
+
+```javascript
+function loadReport(date) {
+  loading.style.display = 'flex';  // 显示遮罩
+  // iframe 始终可见，不需要隐藏
+  frame.src = ARCHIVE_PATH + report.filename;
+  frame.onload = () => {
+    loading.style.display = 'none';  // 隐藏遮罩，iframe 显示出来
+  };
+  // 5秒超时兜底
+  setTimeout(() => { loading.style.display = 'none'; }, 5000);
+}
+```
+
+```css
+.loading {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; color: var(--text-muted); z-index: 10;
+}
+```
+
+### 5.5 旧报告兼容性注入
+
+对于没有移动端样式的旧报告（2026-07-10 之前的），viewer 加载时通过 iframe 注入完整样式：
+
+```javascript
+frame.onload = () => {
+  try {
+    const doc = frame.contentDocument || frame.contentWindow.document;
+    if (doc && !doc.getElementById('mobile-header-fix')) {
+      const style = doc.createElement('style');
+      style.id = 'mobile-header-fix';
+      style.textContent = `@media (max-width: 600px) {
+        body { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+        .container { padding: 12px !important; }
+        header { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: baseline !important; padding: 8px 0 !important; margin-bottom: 8px !important; border-bottom: 1px solid #30363d !important; }
+        h1 { font-size: 15px !important; margin: 0 !important; margin-right: 8px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+        .subtitle { font-size: 11px !important; color: #8b949e !important; margin: 0 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+        .controls { display: none !important; }
+        .filter-bar { display: none !important; }
+        .cards-container { margin-top: 0 !important; }
+        .card { margin-bottom: 10px !important; border-radius: 8px !important; }
+        .card-header { padding: 10px 12px !important; flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+        .card-header::after { align-self: flex-end !important; margin-top: -20px !important; }
+        .card-title { gap: 6px !important; }
+        .stars { font-size: 14px !important; }
+        .product-name { font-size: 14px !important; }
+        .score { font-size: 16px !important; }
+        .card-tags { gap: 4px !important; }
+        .tag { padding: 2px 8px !important; font-size: 11px !important; }
+        .card-quote { gap: 6px !important; }
+        .price { font-size: 16px !important; }
+        .change { font-size: 13px !important; padding: 1px 6px !important; }
+        .card-body { padding: 0 12px !important; }
+        .card.expanded .card-body { padding: 0 12px 12px !important; }
+        .quick-info { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; padding: 10px 0 !important; margin-bottom: 10px !important; }
+        .info-label { font-size: 11px !important; }
+        .info-value { font-size: 13px !important; }
+        .summary { padding: 8px 12px !important; font-size: 13px !important; margin-bottom: 10px !important; }
+        .section { margin-bottom: 10px !important; }
+        .section-title { font-size: 12px !important; margin-bottom: 6px !important; }
+        .logic-item { padding: 6px 0 !important; font-size: 13px !important; }
+        .risk-item { padding: 6px 10px !important; font-size: 12px !important; margin-bottom: 4px !important; }
+        .quant-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+        .quant-item { padding: 8px !important; }
+        .quant-label { font-size: 11px !important; }
+        .quant-value { font-size: 14px !important; }
+        .sector-info { font-size: 13px !important; }
+        .sector-avg { font-size: 13px !important; padding: 6px 10px !important; }
+        .stocks-list { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
+        .stock-item { padding: 6px 10px !important; font-size: 12px !important; }
+        footer { padding: 12px 0 !important; margin-top: 12px !important; font-size: 11px !important; }
+      }`;
+      doc.head.appendChild(style);
+    }
+  } catch(e) {}
+};
+```
+
+**注意：** 注入样式必须与 generator.py 的 @media 规则**逐行对应**，不能遗漏任何选择器。
+
+---
+
+## 6. report_list.html 历史总览规范
+
+### 6.1 移动端适配 (@media max-width: 640px)
+
+```css
+@media (max-width: 640px) {
+  .container { padding: 10px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 0 12px; }
+  .header-left { width: 100%; }
+  .header-title { font-size: 16px; }
+  .btn-back { font-size: 12px; padding: 6px 12px; }
+  .search-bar { margin-bottom: 12px; }
+  .search-box input { font-size: 14px; padding: 10px 12px 10px 36px; }
+  .stats-bar { gap: 8px; }
+  .stat-card { min-width: 0; flex: 1 1 calc(50% - 4px); padding: 10px 12px; }
+  .stat-value { font-size: 18px; }
+  .report-item { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .date-badge { min-width: 44px; padding: 5px 8px; }
+  .date-day { font-size: 15px; }
+  .report-info { width: 100%; order: 3; }
+  .report-title { font-size: 14px; margin-bottom: 4px; }
+  .report-meta { gap: 4px; }
+  .meta-tag { font-size: 11px; padding: 2px 8px; }
+  .count-pills { order: 2; }
+  .count-pill { font-size: 11px; padding: 3px 8px; }
+  .btn-view { order: 4; width: 100%; justify-content: center; padding: 8px; font-size: 13px; }
+  .pagination { gap: 4px; }
+  .page-btn { min-width: 32px; height: 32px; font-size: 13px; }
+}
+```
+
+---
+
+## 7. 交互脚本 (JavaScript)
 
 必须包含：
 
@@ -234,7 +441,7 @@ function filterSector(sector) {
 
 ---
 
-## 6. 文件输出规范
+## 8. 文件输出规范
 
 1. **主文件**：`output/index.html`（当日报告）
 2. **归档文件**：`archive/YYYY-MM-DD.html`（历史归档）
@@ -242,10 +449,12 @@ function filterSector(sector) {
 
 ---
 
-## 7. 修改记录
+## 9. 修改记录
 
 | 日期 | 修改内容 |
 |------|----------|
-| 2026-07-10 | body 添加 `overflow-y: auto; -webkit-overflow-scrolling: touch;` 修复移动端初始无法滚动 |
-| 2026-07-10 | iframe 从 display:none 改为 visibility:hidden 解决移动端 onload 丢失 |
-| 2026-07-10 | 添加 report_viewer.html + report_list.html 前端系统 |
+| 2026-07-10 | iframe 加载策略：iframe 始终可见，用 loading 遮罩层覆盖，避免移动端初始滚动失效 |
+| 2026-07-10 | iframe 注入旧报告样式：完整 @media 规则（含 .card / .quick-info / .quant-grid / .stocks-list / footer 等全部选择器） |
+| 2026-07-10 | body 添加 `overflow-y: auto; -webkit-overflow-scrolling: touch;` |
+| 2026-07-10 | 添加 report_viewer.html（移动端顶部日期条 + toolbar 隐藏）和 report_list.html |
+| 2026-07-10 | 添加完整移动端 @media 样式，header 改为 flex row，隐藏 controls/filter-bar |
