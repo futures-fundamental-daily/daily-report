@@ -496,6 +496,7 @@ function loadReport(date) {
         const style = doc.createElement('style');
         style.id = 'mobile-header-fix';
         style.textContent = `@media (max-width: 600px) {
+          body { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
           header { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: baseline !important; padding: 8px 0 !important; margin-bottom: 8px !important; border-bottom: 1px solid #30363d !important; }
           h1 { font-size: 15px !important; margin: 0 !important; margin-right: 8px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
           .subtitle { font-size: 11px !important; color: #8b949e !important; margin: 0 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }

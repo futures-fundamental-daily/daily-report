@@ -212,6 +212,8 @@ def generate_html():
             color: #c9d1d9;
             line-height: 1.6;
             min-height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }}
         
         .container {{

@@ -246,6 +246,6 @@ function filterSector(sector) {
 
 | 日期 | 修改内容 |
 |------|----------|
-| 2026-07-10 | 添加完整移动端 @media 样式，header 改为 flex row，隐藏 controls/filter-bar |
+| 2026-07-10 | body 添加 `overflow-y: auto; -webkit-overflow-scrolling: touch;` 修复移动端初始无法滚动 |
 | 2026-07-10 | iframe 从 display:none 改为 visibility:hidden 解决移动端 onload 丢失 |
 | 2026-07-10 | 添加 report_viewer.html + report_list.html 前端系统 |
