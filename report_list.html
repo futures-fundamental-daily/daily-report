@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期货日报历史总览</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --card-hover: #1c2128;
+  --border: #30363d;
+  --border-light: #484f58;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #d4a853;
+  --accent-hover: #c49a43;
+  --up: #ff4444;
+  --down: #3fb950;
+  --neutral: #8b949e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 20px; }
+
+/* Header */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; padding: 24px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 36px; height: 36px; background: var(--accent); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.header-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+.header-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* Back Button */
+.btn-back {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg);
+  color: var(--text-muted); text-decoration: none; font-size: 13px; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.btn-back:hover { background: var(--border); color: var(--text); border-color: var(--border-light); }
+
+/* Search */
+.search-bar { margin-bottom: 20px; }
+.search-box {
+  position: relative; max-width: 400px;
+}
+.search-box input {
+  width: 100%; padding: 10px 12px 10px 36px; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--card-bg); color: var(--text); font-size: 14px;
+  outline: none; transition: border-color 0.2s;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box .search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 14px; pointer-events: none;
+}
+
+/* Stats */
+.stats-bar {
+  display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 18px; min-width: 140px; flex: 1;
+}
+.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.stat-value { font-size: 22px; font-weight: 700; color: var(--accent); }
+.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* Report List */
+.report-list { display: flex; flex-direction: column; gap: 8px; }
+.report-item {
+  display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+  transition: all 0.15s; cursor: default;
+}
+.report-item:hover { border-color: var(--border-light); background: var(--card-hover); }
+.report-item.hidden { display: none; }
+
+/* Date Badge */
+.date-badge {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 56px; padding: 8px 10px; background: var(--bg); border-radius: 6px;
+  border: 1px solid var(--border); flex-shrink: 0;
+}
+.date-month { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.date-day { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+.date-year { font-size: 10px; color: var(--text-muted); }
+
+/* Report Info */
+.report-info { flex: 1; min-width: 0; }
+.report-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.report-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.meta-tag {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px;
+  border-radius: 4px; font-size: 12px; font-weight: 500;
+}
+.meta-tag.gainer { background: rgba(255, 68, 68, 0.12); color: var(--up); }
+.meta-tag.score { background: rgba(212, 168, 83, 0.12); color: var(--accent); }
+.meta-tag.direction-up { background: rgba(255, 68, 68, 0.12); color: var(--up); }
+.meta-tag.direction-down { background: rgba(63, 185, 80, 0.12); color: var(--down); }
+.meta-tag.direction-neutral { background: rgba(139, 148, 158, 0.12); color: var(--neutral); }
+.meta-tag.sectors { background: rgba(31, 111, 235, 0.1); color: #58a6ff; }
+
+/* Count Pills */
+.count-pills { display: flex; gap: 6px; flex-shrink: 0; }
+.count-pill {
+  display: flex; align-items: center; gap: 3px; padding: 4px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+}
+.count-pill.up { background: rgba(255, 68, 68, 0.12); color: var(--up); }
+.count-pill.down { background: rgba(63, 185, 80, 0.12); color: var(--down); }
+
+/* View Button */
+.btn-view {
+  display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px;
+  border: 1px solid var(--accent); border-radius: 6px; background: transparent;
+  color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0; white-space: nowrap;
+}
+.btn-view:hover { background: var(--accent); color: var(--bg); }
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);
+}
+.page-btn {
+  min-width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card-bg); color: var(--text-muted); font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.page-btn:hover:not(:disabled) { background: var(--border); color: var(--text); }
+.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+.page-btn.arrow { font-size: 16px; padding: 0 8px; }
+.page-info { font-size: 13px; color: var(--text-muted); margin: 0 8px; }
+
+/* Empty State */
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--text-muted);
+}
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-text { font-size: 15px; margin-bottom: 8px; }
+.empty-hint { font-size: 13px; }
+
+/* Footer */
+.footer {
+  text-align: center; padding: 30px 0 20px; color: var(--text-muted); font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container { padding: 12px; }
+  .header { padding: 16px 0 14px; }
+  .header-left { width: 100%; }
+  .header-title { font-size: 17px; }
+  .report-item { flex-wrap: wrap; gap: 10px; }
+  .date-badge { min-width: 48px; padding: 6px 8px; }
+  .date-day { font-size: 16px; }
+  .report-info { width: 100%; order: 3; }
+  .count-pills { order: 2; }
+  .btn-view { order: 4; width: 100%; justify-content: center; }
+  .stats-bar { gap: 8px; }
+  .stat-card { min-width: 100px; padding: 10px 12px; }
+  .stat-value { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">📋</div>
+      <div>
+        <div class="header-title">期货日报历史总览</div>
+        <div class="header-sub">Historical Reports Archive</div>
+      </div>
+    </div>
+    <a href="report_viewer.html" class="btn-back">← 返回查阅中心</a>
+  </div>
+
+  <div class="search-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="搜索日期、品种、板块..." oninput="onSearch()">
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-label">总报告数</div>
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-sub">历史归档</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">涨多跌少</div>
+      <div class="stat-value" id="statUp">0</div>
+      <div class="stat-sub">交易日占比</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">最新报告</div>
+      <div class="stat-value" id="statLatest" style="font-size: 16px;">--</div>
+      <div class="stat-sub">日期</div>
+    </div>
+  </div>
+
+  <div class="report-list" id="reportList"></div>
+
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon">🔍</div>
+    <div class="empty-text">未找到匹配的报告</div>
+    <div class="empty-hint">尝试更换搜索关键词</div>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+
+  <div class="footer">
+    <p>期货基本面日报 v2.0 | 数据仅供参考，不构成投资建议</p>
+  </div>
+</div>
+
+<script>
+// ============================================
+// Configuration
+// ============================================
+const INDEX_PATH = './report_index.json';
+const ITEMS_PER_PAGE = 20;
+
+// ============================================
+// State
+// ============================================
+let indexData = null;
+let currentPage = 1;
+let filteredReports = [];
+let searchQuery = '';
+
+// ============================================
+// Init
+// ============================================
+async function init() {
+  await loadIndex();
+  if (!indexData || indexData.reports.length === 0) {
+    showEmpty(true);
+    return;
+  }
+  filteredReports = [...indexData.reports];
+  updateStats();
+  renderPage(1);
+}
+
+async function loadIndex() {
+  try {
+    const res = await fetch(INDEX_PATH + '?t=' + Date.now());
+    indexData = await res.json();
+  } catch (e) {
+    console.error('Failed to load index:', e);
+    indexData = { reports: [] };
+  }
+}
+
+// ============================================
+// Stats
+// ============================================
+function updateStats() {
+  const reports = indexData.reports;
+  document.getElementById('statTotal').textContent = reports.length;
+
+  const upDays = reports.filter(r => r.up_count > r.down_count).length;
+  document.getElementById('statUp').textContent = upDays;
+
+  const latest = reports[0];
+  document.getElementById('statLatest').textContent = latest ? latest.date : '--';
+}
+
+// ============================================
+// Render List
+// ============================================
+function renderPage(page) {
+  currentPage = page;
+  const list = document.getElementById('reportList');
+  const start = (page - 1) * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+  const pageItems = filteredReports.slice(start, end);
+
+  list.innerHTML = '';
+
+  if (pageItems.length === 0) {
+    showEmpty(true);
+    document.getElementById('pagination').style.display = 'none';
+    return;
+  }
+
+  showEmpty(false);
+
+  pageItems.forEach(r => {
+    const d = new Date(r.date);
+    const monthNames = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const dirClass = r.up_count > r.down_count ? 'direction-up' : r.down_count > r.up_count ? 'direction-down' : 'direction-neutral';
+    const dirText = r.up_count > r.down_count ? '涨多跌少' : r.down_count > r.up_count ? '跌多涨少' : '涨跌均衡';
+    const gainerName = r.top_gainer.split(' ')[0];
+
+    const el = document.createElement('div');
+    el.className = 'report-item';
+    el.innerHTML = `
+      <div class="date-badge">
+        <div class="date-month">${monthNames[d.getMonth()]}</div>
+        <div class="date-day">${d.getDate()}</div>
+        <div class="date-year">${d.getFullYear()}</div>
+      </div>
+      <div class="report-info">
+        <div class="report-title">${r.title}</div>
+        <div class="report-meta">
+          <span class="meta-tag gainer">📈 ${r.top_gainer}</span>
+          <span class="meta-tag score">⭐ ${r.top_score}</span>
+          <span class="meta-tag ${dirClass}">${dirText}</span>
+          <span class="meta-tag sectors">${r.sectors.slice(0,3).join(' · ')}</span>
+        </div>
+      </div>
+      <div class="count-pills">
+        <span class="count-pill up">↑ ${r.up_count}</span>
+        <span class="count-pill down">↓ ${r.down_count}</span>
+      </div>
+      <a href="report_viewer.html#${r.date}" class="btn-view">查看 →</a>
+    `;
+    list.appendChild(el);
+  });
+
+  renderPagination();
+}
+
+// ============================================
+// Pagination
+// ============================================
+function renderPagination() {
+  const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE);
+  const pagination = document.getElementById('pagination');
+
+  if (totalPages <= 1) {
+    pagination.style.display = 'none';
+    return;
+  }
+  pagination.style.display = 'flex';
+
+  let html = '';
+
+  // Prev
+  html += `<button class="page-btn arrow" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+
+  // First page
+  if (totalPages > 1) {
+    html += `<button class="page-btn ${currentPage === 1 ? 'active' : ''}" onclick="goPage(1)">1</button>`;
+  }
+
+  // Ellipsis before
+  if (currentPage > 3) {
+    html += `<span class="page-info">...</span>`;
+  }
+
+  // Middle pages
+  for (let p = Math.max(2, currentPage - 1); p <= Math.min(totalPages - 1, currentPage + 1); p++) {
+    html += `<button class="page-btn ${currentPage === p ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
+  }
+
+  // Ellipsis after
+  if (currentPage < totalPages - 2) {
+    html += `<span class="page-info">...</span>`;
+  }
+
+  // Last page
+  if (totalPages > 1) {
+    html += `<button class="page-btn ${currentPage === totalPages ? 'active' : ''}" onclick="goPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // Next
+  html += `<button class="page-btn arrow" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+
+  pagination.innerHTML = html;
+}
+
+function goPage(page) {
+  const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE);
+  if (page < 1 || page > totalPages) return;
+  renderPage(page);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================
+// Search
+// ============================================
+function onSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  searchQuery = q;
+
+  if (!q) {
+    filteredReports = [...indexData.reports];
+  } else {
+    filteredReports = indexData.reports.filter(r => {
+      return r.date.includes(q) ||
+        r.title.toLowerCase().includes(q) ||
+        r.top_gainer.toLowerCase().includes(q) ||
+        r.top_score.toLowerCase().includes(q) ||
+        r.direction.includes(q) ||
+        r.sectors.some(s => s.toLowerCase().includes(q));
+    });
+  }
+
+  renderPage(1);
+}
+
+// ============================================
+// Empty State
+// ============================================
+function showEmpty(show) {
+  document.getElementById('emptyState').style.display = show ? 'block' : 'none';
+  document.getElementById('reportList').style.display = show ? 'none' : 'flex';
+}
+
+// ============================================
+// Start
+// ============================================
+init();
+</script>
+</body>
+</html>

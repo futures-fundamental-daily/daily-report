@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期货基本面日报 | 查阅中心</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --card-hover: #1c2128;
+  --border: #30363d;
+  --border-light: #484f58;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #d4a853;
+  --accent-hover: #c49a43;
+  --up: #ff4444;
+  --down: #3fb950;
+  --neutral: #8b949e;
+  --sidebar-w: 320px;
+  --sidebar-w-mobile: 280px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.5;
+  overflow: hidden;
+}
+
+/* Layout */
+.app { display: flex; height: 100vh; width: 100vw; }
+.sidebar {
+  width: var(--sidebar-w); flex-shrink: 0; background: var(--card-bg);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  overflow: hidden; transition: transform 0.3s ease;
+}
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+/* Sidebar Header */
+.sidebar-header {
+  padding: 18px 16px 12px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.logo-icon {
+  width: 32px; height: 32px; background: var(--accent); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.logo-text { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+.logo-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* Search */
+.search-box {
+  position: relative; margin-top: 4px;
+}
+.search-box input {
+  width: 100%; padding: 8px 12px 8px 32px; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box .search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 13px; pointer-events: none;
+}
+
+/* Sidebar Scroll Area */
+.sidebar-scroll { flex: 1; overflow-y: auto; padding: 0 0 16px; }
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.sidebar-scroll::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+/* Section */
+.section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.section-title {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.section-title .badge {
+  font-size: 10px; background: var(--border); padding: 1px 6px; border-radius: 10px;
+  letter-spacing: 0; text-transform: none; font-weight: 500;
+}
+
+/* Calendar */
+.calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-nav { color: var(--text-muted); cursor: pointer; padding: 4px 6px; border-radius: 4px; font-size: 14px; }
+.cal-nav:hover { color: var(--text); background: var(--border); }
+.cal-month { font-size: 14px; font-weight: 600; color: var(--text); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-day-header {
+  text-align: center; font-size: 11px; color: var(--text-muted); padding: 4px 0;
+  font-weight: 500;
+}
+.cal-day {
+  text-align: center; padding: 5px 0; font-size: 12px; border-radius: 4px;
+  cursor: pointer; color: var(--text-muted); transition: all 0.15s;
+  min-height: 28px; display: flex; align-items: center; justify-content: center;
+}
+.cal-day:hover { background: var(--border); color: var(--text); }
+.cal-day.other-month { opacity: 0.3; }
+.cal-day.has-report {
+  color: var(--accent); font-weight: 600;
+  background: rgba(212, 168, 83, 0.1);
+}
+.cal-day.has-report:hover { background: rgba(212, 168, 83, 0.2); }
+.cal-day.has-report.active {
+  background: var(--accent); color: #0d1117; font-weight: 700;
+}
+.cal-day.today { outline: 1px solid var(--border-light); outline-offset: -1px; }
+
+/* Recent List */
+.recent-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  margin-bottom: 2px;
+}
+.recent-item:hover { background: var(--border); }
+.recent-item.active { background: rgba(212, 168, 83, 0.15); }
+.recent-date {
+  font-size: 12px; font-weight: 600; color: var(--text); min-width: 70px; flex-shrink: 0;
+}
+.recent-meta { font-size: 11px; color: var(--text-muted); line-height: 1.4; flex: 1; }
+.recent-meta .direction { display: inline-block; margin-left: 4px; }
+.recent-meta .direction.up { color: var(--up); }
+.recent-meta .direction.down { color: var(--down); }
+
+/* Sector Filters */
+.sector-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.sector-tag {
+  padding: 4px 10px; border-radius: 12px; font-size: 12px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+  user-select: none;
+}
+.sector-tag:hover { border-color: var(--border-light); color: var(--text); }
+.sector-tag.active { background: var(--accent); border-color: var(--accent); color: #0d1117; font-weight: 600; }
+
+/* Favorites */
+.fav-item {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  margin-bottom: 2px;
+}
+.fav-item:hover { background: var(--border); }
+.fav-star { color: var(--accent); font-size: 13px; flex-shrink: 0; }
+.fav-text { font-size: 12px; color: var(--text); }
+.fav-empty { font-size: 12px; color: var(--text-muted); padding: 4px 0; }
+
+/* Toolbar */
+.toolbar {
+  height: 52px; border-bottom: 1px solid var(--border); display: flex;
+  align-items: center; justify-content: space-between; padding: 0 20px;
+  flex-shrink: 0; background: var(--card-bg);
+}
+.toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 8px; }
+.toolbar-date { font-size: 16px; font-weight: 700; color: var(--text); }
+.toolbar-date .accent { color: var(--accent); }
+.toolbar-tag {
+  font-size: 11px; padding: 3px 10px; border-radius: 4px; border: 1px solid var(--border);
+  color: var(--text-muted); display: flex; align-items: center; gap: 4px;
+}
+.toolbar-btn {
+  width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.toolbar-btn:hover { background: var(--border); color: var(--text); border-color: var(--border-light); }
+.toolbar-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.toolbar-btn.primary { border-color: var(--accent); color: var(--accent); }
+.toolbar-btn.primary:hover { background: rgba(212, 168, 83, 0.1); }
+
+/* Content Area */
+.content { flex: 1; position: relative; overflow: hidden; background: var(--bg); }
+.content iframe {
+  width: 100%; height: 100%; border: none; background: var(--bg);
+}
+
+/* Mobile Toggle */
+.mobile-toggle {
+  display: none; position: fixed; bottom: 20px; right: 20px; z-index: 100;
+  width: 48px; height: 48px; border-radius: 50%; background: var(--accent);
+  color: #0d1117; border: none; font-size: 20px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4); align-items: center; justify-content: center;
+}
+
+/* Overlay for mobile */
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90;
+}
+
+/* Loading */
+.loading {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; color: var(--text-muted); z-index: 10;
+}
+.loading-spinner {
+  width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Keyboard hint */
+.keyboard-hint {
+  position: fixed; bottom: 8px; right: 8px; font-size: 11px; color: var(--text-muted);
+  opacity: 0; transition: opacity 0.3s; z-index: 50; pointer-events: none;
+}
+.keyboard-hint.show { opacity: 1; }
+
+/* Fullscreen */
+body.fullscreen .sidebar { display: none; }
+body.fullscreen .main { width: 100vw; }
+body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+    transform: translateX(-100%); width: var(--sidebar-w-mobile); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .mobile-toggle { display: flex; }
+  .toolbar { padding: 0 12px; height: 48px; }
+  .toolbar-date { font-size: 14px; }
+  .keyboard-hint { display: none; }
+}
+
+/* Bottom calendar bar for mobile */
+.bottom-cal-bar {
+  display: none; height: 60px; border-top: 1px solid var(--border); flex-shrink: 0;
+  background: var(--card-bg); padding: 8px 12px; overflow-x: auto; white-space: nowrap;
+}
+.bottom-cal-bar::-webkit-scrollbar { display: none; }
+.bottom-cal-item {
+  display: inline-block; padding: 6px 12px; border-radius: 6px; margin-right: 6px;
+  font-size: 12px; cursor: pointer; color: var(--text-muted); border: 1px solid transparent;
+  min-width: 60px; text-align: center; line-height: 1.3;
+}
+.bottom-cal-item:hover { background: var(--border); color: var(--text); }
+.bottom-cal-item.has-report { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.bottom-cal-item.active { background: var(--accent); color: #0d1117; font-weight: 700; }
+.bottom-cal-item .day { font-size: 11px; color: var(--text-muted); }
+.bottom-cal-item.has-report .day, .bottom-cal-item.active .day { color: inherit; opacity: 0.7; }
+
+@media (max-width: 768px) {
+  .bottom-cal-bar { display: block; }
+  body.fullscreen .bottom-cal-bar { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">📊</div>
+        <div>
+          <div class="logo-text">期货基本面日报</div>
+          <div class="logo-sub">Fundamental Daily Reports</div>
+        </div>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜索品种、日期..." oninput="onSearch()">
+      </div>
+    </div>
+
+    <div class="sidebar-scroll" id="sidebarScroll">
+      <!-- Calendar -->
+      <div class="section" id="calendarSection">
+        <div class="calendar-header">
+          <span class="cal-nav" onclick="changeMonth(-1)">◀</span>
+          <span class="cal-month" id="calMonth"></span>
+          <span class="cal-nav" onclick="changeMonth(1)">▶</span>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <!-- Recent -->
+      <div class="section" id="recentSection">
+        <div class="section-title">最近报告 <span class="badge" id="recentBadge">7</span></div>
+        <div id="recentList"></div>
+      </div>
+
+      <!-- Sector Filter -->
+      <div class="section" id="sectorSection">
+        <div class="section-title">板块筛选</div>
+        <div class="sector-tags" id="sectorTags"></div>
+      </div>
+
+      <!-- Favorites -->
+      <div class="section" id="favSection" style="border-bottom:none;">
+        <div class="section-title">收藏 <span class="badge" id="favBadge">0</span></div>
+        <div id="favList"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Main -->
+  <main class="main" id="main">
+    <div class="toolbar" id="toolbar">
+      <div class="toolbar-left">
+        <button class="toolbar-btn" id="mobileMenuBtn" onclick="toggleSidebar()" title="菜单">☰</button>
+        <span class="toolbar-date" id="toolbarDate">期货基本面日报</span>
+        <span class="toolbar-tag" id="toolbarDirection">--</span>
+      </div>
+      <div class="toolbar-right">
+        <button class="toolbar-btn" onclick="prevReport()" title="上一天 (←)">←</button>
+        <button class="toolbar-btn" onclick="nextReport()" title="下一天 (→)">→</button>
+        <button class="toolbar-btn primary" id="favBtn" onclick="toggleFavorite()" title="收藏 (F)">☆</button>
+        <button class="toolbar-btn" onclick="goToList()" title="历史列表">📋</button>
+        <button class="toolbar-btn fullscreen-btn" onclick="toggleFullscreen()" title="全屏">⛶</button>
+      </div>
+    </div>
+
+    <div class="content" id="content">
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <span>加载中...</span>
+      </div>
+      <iframe id="reportFrame" sandbox="allow-same-origin"></iframe>
+    </div>
+
+    <!-- Bottom calendar bar (mobile) -->
+    <div class="bottom-cal-bar" id="bottomCalBar"></div>
+  </main>
+</div>
+
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">☰</button>
+
+<div class="keyboard-hint" id="keyboardHint">← → 切换日期 | F 收藏 | Esc 关闭侧边栏</div>
+
+<script>
+// ============================================
+// Configuration
+// ============================================
+const ARCHIVE_PATH = './archive/';
+const INDEX_PATH = './report_index.json';
+
+// ============================================
+// State
+// ============================================
+let indexData = null;
+let currentDate = null;
+let currentMonth = new Date();
+let favorites = JSON.parse(localStorage.getItem('futures_favorites') || '[]');
+let activeSector = 'all';
+let isFullscreen = false;
+
+// ============================================
+// Init
+// ============================================
+async function init() {
+  await loadIndex();
+  renderCalendar();
+  renderRecent();
+  renderSectors();
+  renderFavorites();
+  renderBottomCalBar();
+
+  // Determine initial date
+  const today = formatDate(new Date());
+  const hasToday = indexData.reports.find(r => r.date === today);
+  if (hasToday) {
+    loadReport(today);
+  } else if (indexData.reports.length > 0) {
+    loadReport(indexData.reports[0].date);
+  } else {
+    showNoData();
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', onKeydown);
+  document.addEventListener('fullscreenchange', onFullscreenChange);
+
+  // Show keyboard hint briefly
+  const hint = document.getElementById('keyboardHint');
+  hint.classList.add('show');
+  setTimeout(() => hint.classList.remove('show'), 4000);
+}
+
+async function loadIndex() {
+  try {
+    const res = await fetch(INDEX_PATH + '?t=' + Date.now());
+    indexData = await res.json();
+  } catch (e) {
+    console.error('Failed to load index:', e);
+    indexData = { reports: [] };
+  }
+}
+
+function showNoData() {
+  document.getElementById('loading').innerHTML = '<div style="color:var(--text-muted);font-size:14px;">暂无数据</div>';
+  document.getElementById('toolbarDate').textContent = '暂无数据';
+}
+
+// ============================================
+// Report Loading
+// ============================================
+function loadReport(date) {
+  if (!date) return;
+  const report = indexData.reports.find(r => r.date === date);
+  if (!report) return;
+
+  currentDate = date;
+  const frame = document.getElementById('reportFrame');
+  const loading = document.getElementById('loading');
+
+  loading.style.display = 'flex';
+  frame.style.display = 'none';
+
+  frame.src = ARCHIVE_PATH + report.filename;
+  frame.onload = () => {
+    loading.style.display = 'none';
+    frame.style.display = 'block';
+  };
+  frame.onerror = () => {
+    loading.innerHTML = '<div style="color:var(--text-muted)">加载失败</div>';
+  };
+
+  // Update UI
+  document.getElementById('toolbarDate').innerHTML =
+    `期货基本面日报 <span class="accent">${date}</span>`;
+  document.getElementById('toolbarDirection').textContent = report.direction;
+  document.getElementById('toolbarDirection').style.color =
+    report.up_count > report.down_count ? 'var(--up)' :
+    report.down_count > report.up_count ? 'var(--down)' : 'var(--neutral)';
+
+  updateActiveStates();
+  updateFavButton();
+}
+
+function updateActiveStates() {
+  // Calendar
+  document.querySelectorAll('.cal-day').forEach(d => {
+    d.classList.toggle('active', d.dataset.date === currentDate);
+  });
+  // Recent
+  document.querySelectorAll('.recent-item').forEach(d => {
+    d.classList.toggle('active', d.dataset.date === currentDate);
+  });
+  // Bottom bar
+  document.querySelectorAll('.bottom-cal-item').forEach(d => {
+    d.classList.toggle('active', d.dataset.date === currentDate);
+  });
+}
+
+function updateFavButton() {
+  const btn = document.getElementById('favBtn');
+  const isFav = favorites.includes(currentDate);
+  btn.textContent = isFav ? '★' : '☆';
+  btn.style.color = isFav ? 'var(--accent)' : '';
+}
+
+// ============================================
+// Navigation
+// ============================================
+function prevReport() {
+  const idx = indexData.reports.findIndex(r => r.date === currentDate);
+  if (idx >= 0 && idx < indexData.reports.length - 1) {
+    loadReport(indexData.reports[idx + 1].date);
+  }
+}
+
+function nextReport() {
+  const idx = indexData.reports.findIndex(r => r.date === currentDate);
+  if (idx > 0) {
+    loadReport(indexData.reports[idx - 1].date);
+  }
+}
+
+function goToList() {
+  window.open('report_list.html', '_blank');
+}
+
+// ============================================
+// Calendar
+// ============================================
+function renderCalendar() {
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  document.getElementById('calMonth').textContent = `${year}年${month + 1}月`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const prevDays = new Date(year, month, 0).getDate();
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const headers = ['日','一','二','三','四','五','六'];
+  headers.forEach(h => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-header'; el.textContent = h;
+    grid.appendChild(el);
+  });
+
+  const today = formatDate(new Date());
+  const reportDates = new Set(indexData.reports.map(r => r.date));
+
+  // Previous month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = prevDays - i;
+    const el = createCalDay(day, true, null, false);
+    grid.appendChild(el);
+  }
+
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const has = reportDates.has(dateStr);
+    const el = createCalDay(d, false, dateStr, has);
+    if (dateStr === today) el.classList.add('today');
+    grid.appendChild(el);
+  }
+
+  // Next month padding
+  const remaining = (7 - ((firstDay + daysInMonth) % 7)) % 7;
+  for (let d = 1; d <= remaining; d++) {
+    const el = createCalDay(d, true, null, false);
+    grid.appendChild(el);
+  }
+}
+
+function createCalDay(day, otherMonth, dateStr, hasReport) {
+  const el = document.createElement('div');
+  el.className = 'cal-day';
+  if (otherMonth) el.classList.add('other-month');
+  if (hasReport) el.classList.add('has-report');
+  el.textContent = day;
+  if (dateStr) {
+    el.dataset.date = dateStr;
+    el.onclick = () => { loadReport(dateStr); closeSidebar(); };
+  }
+  return el;
+}
+
+function changeMonth(delta) {
+  currentMonth.setMonth(currentMonth.getMonth() + delta);
+  renderCalendar();
+  updateActiveStates();
+}
+
+// ============================================
+// Recent List
+// ============================================
+function renderRecent() {
+  const list = document.getElementById('recentList');
+  list.innerHTML = '';
+
+  const recent = indexData.reports.slice(0, 7);
+  document.getElementById('recentBadge').textContent = recent.length;
+
+  recent.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'recent-item';
+    el.dataset.date = r.date;
+    el.onclick = () => { loadReport(r.date); closeSidebar(); };
+
+    const dirClass = r.up_count > r.down_count ? 'up' : r.down_count > r.up_count ? 'down' : '';
+    const dirText = r.up_count > r.down_count ? '↑' : r.down_count > r.up_count ? '↓' : '→';
+
+    el.innerHTML = `
+      <span class="recent-date">${r.date.slice(5)}</span>
+      <span class="recent-meta">
+        ${r.top_gainer.split(' ')[0]}
+        <span class="direction ${dirClass}">${dirText} ${r.up_count}:${r.down_count}</span>
+      </span>
+    `;
+    list.appendChild(el);
+  });
+}
+
+// ============================================
+// Sector Filters
+// ============================================
+function renderSectors() {
+  const container = document.getElementById('sectorTags');
+  container.innerHTML = '';
+
+  const allSectors = new Set();
+  indexData.reports.forEach(r => r.sectors.forEach(s => allSectors.add(s)));
+  const sectors = ['全部', ...Array.from(allSectors).sort()];
+
+  sectors.forEach(s => {
+    const el = document.createElement('span');
+    el.className = 'sector-tag' + (s === '全部' ? ' active' : '');
+    el.textContent = s;
+    el.onclick = () => selectSector(s, el);
+    container.appendChild(el);
+  });
+}
+
+function selectSector(sector, el) {
+  activeSector = sector === '全部' ? 'all' : sector;
+  document.querySelectorAll('.sector-tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // Filter the recent list visually
+  filterRecentList();
+}
+
+function filterRecentList() {
+  const items = document.querySelectorAll('.recent-item');
+  items.forEach(item => {
+    const date = item.dataset.date;
+    const report = indexData.reports.find(r => r.date === date);
+    if (!report) return;
+    const visible = activeSector === 'all' || report.sectors.includes(activeSector);
+    item.style.display = visible ? 'flex' : 'none';
+  });
+}
+
+// ============================================
+// Favorites
+// ============================================
+function renderFavorites() {
+  const list = document.getElementById('favList');
+  list.innerHTML = '';
+
+  const favReports = favorites.map(d => indexData.reports.find(r => r.date === d)).filter(Boolean);
+  document.getElementById('favBadge').textContent = favReports.length;
+
+  if (favReports.length === 0) {
+    list.innerHTML = '<div class="fav-empty">按 F 收藏当前报告</div>';
+    return;
+  }
+
+  favReports.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'fav-item';
+    el.onclick = () => { loadReport(r.date); closeSidebar(); };
+    el.innerHTML = `<span class="fav-star">★</span><span class="fav-text">${r.date}</span>`;
+    list.appendChild(el);
+  });
+}
+
+function toggleFavorite() {
+  if (!currentDate) return;
+  const idx = favorites.indexOf(currentDate);
+  if (idx >= 0) {
+    favorites.splice(idx, 1);
+  } else {
+    favorites.push(currentDate);
+  }
+  localStorage.setItem('futures_favorites', JSON.stringify(favorites));
+  updateFavButton();
+  renderFavorites();
+}
+
+// ============================================
+// Bottom Calendar Bar (Mobile)
+// ============================================
+function renderBottomCalBar() {
+  const bar = document.getElementById('bottomCalBar');
+  bar.innerHTML = '';
+
+  const recent30 = indexData.reports.slice(0, 30).reverse();
+  recent30.forEach(r => {
+    const d = new Date(r.date);
+    const dayNames = ['日','一','二','三','四','五','六'];
+    const el = document.createElement('div');
+    el.className = 'bottom-cal-item has-report';
+    el.dataset.date = r.date;
+    el.innerHTML = `<div class="day">${d.getMonth()+1}/${d.getDate()} ${dayNames[d.getDay()]}</div><div>${r.date.slice(5)}</div>`;
+    el.onclick = () => loadReport(r.date);
+    bar.appendChild(el);
+  });
+}
+
+// ============================================
+// Search
+// ============================================
+function onSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!q) {
+    // Reset
+    document.querySelectorAll('.recent-item').forEach(i => i.style.display = 'flex');
+    return;
+  }
+  document.querySelectorAll('.recent-item').forEach(item => {
+    const date = item.dataset.date;
+    const report = indexData.reports.find(r => r.date === date);
+    if (!report) return;
+    const match = report.date.includes(q) ||
+      report.top_gainer.toLowerCase().includes(q) ||
+      report.top_score.toLowerCase().includes(q) ||
+      report.sectors.some(s => s.includes(q));
+    item.style.display = match ? 'flex' : 'none';
+  });
+}
+
+// ============================================
+// Sidebar & Mobile
+// ============================================
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+
+function closeSidebar() {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+}
+
+// ============================================
+// Fullscreen
+// ============================================
+function toggleFullscreen() {
+  isFullscreen = !isFullscreen;
+  document.body.classList.toggle('fullscreen', isFullscreen);
+}
+
+function onFullscreenChange() {
+  if (!document.fullscreenElement) {
+    document.body.classList.remove('fullscreen');
+    isFullscreen = false;
+  }
+}
+
+// ============================================
+// Keyboard
+// ============================================
+function onKeydown(e) {
+  if (e.target.tagName === 'INPUT') return;
+
+  switch (e.key) {
+    case 'ArrowLeft': e.preventDefault(); prevReport(); break;
+    case 'ArrowRight': e.preventDefault(); nextReport(); break;
+    case 'f': case 'F': e.preventDefault(); toggleFavorite(); break;
+    case 'Escape': closeSidebar(); break;
+  }
+}
+
+// ============================================
+// Utils
+// ============================================
+function formatDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ============================================
+// Start
+// ============================================
+init();
+</script>
+</body>
+</html>

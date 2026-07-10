@@ -1,0 +1,39 @@
+{
+  "version": "v2.0",
+  "updated": "2026-07-10 09:40:00",
+  "reports": [
+    {
+      "date": "2026-07-10",
+      "filename": "2026-07-10.html",
+      "title": "期货基本面日报 2026-07-10",
+      "top_gainer": "铁矿石(I) +3.91%",
+      "top_score": "纯碱(SA) 5.7分",
+      "direction": "涨多跌少",
+      "sectors": ["能源化工", "农产品", "有色金属", "黑色系", "新能源"],
+      "up_count": 7,
+      "down_count": 3
+    },
+    {
+      "date": "2026-07-09",
+      "filename": "2026-07-09.html",
+      "title": "期货基本面日报 2026-07-09",
+      "top_gainer": "铅(PB) +4.50%",
+      "top_score": "铅(PB) 5.9分",
+      "direction": "涨多跌少",
+      "sectors": ["能源化工", "农产品", "有色金属", "黑色系", "新能源"],
+      "up_count": 7,
+      "down_count": 3
+    },
+    {
+      "date": "2026-07-08",
+      "filename": "2026-07-08.html",
+      "title": "期货基本面日报 2026-07-08",
+      "top_gainer": "原油(SC) +3.62%",
+      "top_score": "原油(SC) 5.7分",
+      "direction": "涨多跌少",
+      "sectors": ["能源化工", "农产品", "有色金属", "黑色系", "新能源"],
+      "up_count": 7,
+      "down_count": 3
+    }
+  ]
+}

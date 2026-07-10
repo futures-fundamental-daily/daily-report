@@ -682,10 +682,21 @@ def generate_html():
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(html)
     
-    # 同时保存到archive
+    # 同时归档
     archive_file = BASE_DIR / "archive" / f"{date_str}.html"
-    with open(archive_file, "w", encoding="utf-8") as f:
-        f.write(html)
+    archive_file.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(output_file, archive_file)
+    
+    # 更新索引
+    try:
+        from .build_index import build_index
+        build_index()
+    except ImportError:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("build_index", BASE_DIR / "scripts" / "build_index.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mod.build_index()
     
     print(f"[{datetime.now()}] HTML报告已生成")
     print(f"  主文件: {output_file}")
