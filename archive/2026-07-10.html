@@ -391,18 +391,45 @@
         }
         
         @media (max-width: 600px) {
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .quick-info {
-                grid-template-columns: 1fr;
-            }
-            
-            .quant-grid {
-                grid-template-columns: 1fr;
-            }
+            .container { padding: 12px; }
+            header { padding: 16px 0; margin-bottom: 16px; }
+            h1 { font-size: 20px; }
+            .subtitle { font-size: 12px; }
+            .controls { gap: 8px; margin-bottom: 12px; }
+            .btn { padding: 6px 14px; font-size: 13px; }
+            .filter-bar { gap: 6px; margin-bottom: 12px; }
+            .filter-btn { padding: 5px 10px; font-size: 12px; }
+            .card { margin-bottom: 10px; border-radius: 8px; }
+            .card-header { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 6px; }
+            .card-header::after { align-self: flex-end; margin-top: -20px; }
+            .card-title { gap: 6px; }
+            .stars { font-size: 14px; }
+            .product-name { font-size: 14px; }
+            .score { font-size: 16px; }
+            .card-tags { gap: 4px; }
+            .tag { padding: 2px 8px; font-size: 11px; }
+            .card-quote { gap: 6px; }
+            .price { font-size: 16px; }
+            .change { font-size: 13px; padding: 1px 6px; }
+            .card-body { padding: 0 12px; }
+            .card.expanded .card-body { padding: 0 12px 12px; }
+            .quick-info { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 0; margin-bottom: 10px; }
+            .info-label { font-size: 11px; }
+            .info-value { font-size: 13px; }
+            .summary { padding: 8px 12px; font-size: 13px; margin-bottom: 10px; }
+            .section { margin-bottom: 10px; }
+            .section-title { font-size: 12px; margin-bottom: 6px; }
+            .logic-item { padding: 6px 0; font-size: 13px; }
+            .risk-item { padding: 6px 10px; font-size: 12px; margin-bottom: 4px; }
+            .quant-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .quant-item { padding: 8px; }
+            .quant-label { font-size: 11px; }
+            .quant-value { font-size: 14px; }
+            .sector-info { font-size: 13px; }
+            .sector-avg { font-size: 13px; padding: 6px 10px; }
+            .stocks-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .stock-item { padding: 6px 10px; font-size: 12px; }
+            footer { padding: 16px 0; margin-top: 16px; font-size: 11px; }
         }
     </style>
 </head>
@@ -410,7 +437,7 @@
     <div class="container">
         <header>
             <h1>期货基本面日报</h1>
-            <div class="subtitle">2026-07-10 09:15 | 基于多维度量化分析</div>
+            <div class="subtitle">2026-07-10 14:36 | 基于多维度量化分析</div>
         </header>
         
         <div class="controls">
@@ -1203,7 +1230,7 @@
         
         <footer>
             <p>⚠️ 本报告基于公开信息整理，仅供参考，不构成投资建议。</p>
-            <p>数据更新时间：2026-07-10 09:15</p>
+            <p>数据更新时间：2026-07-10 14:36</p>
         </footer>
     </div>
     

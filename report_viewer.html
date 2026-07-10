@@ -242,18 +242,26 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 10px 12px;
+  padding: 10px 8px;
   align-items: center;
 }
 .mobile-date-bar::-webkit-scrollbar { display: none; }
+.mobile-date-bar .date-bar-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 64px; height: 52px; border-radius: 10px; margin-right: 8px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--accent);
+  font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+  transition: all 0.2s; text-decoration: none;
+}
+.mobile-date-bar .date-bar-btn:hover { border-color: var(--accent); background: rgba(212,168,83,0.1); }
 .mobile-date-item {
   display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
-  min-width: 52px; height: 52px; border-radius: 10px; margin-right: 8px;
+  min-width: 48px; height: 52px; border-radius: 10px; margin-right: 6px;
   cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
   position: relative; flex-shrink: 0;
 }
 .mobile-date-item .d-week { font-size: 10px; color: var(--text-muted); line-height: 1.2; }
-.mobile-date-item .d-num { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.mobile-date-item .d-num { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.2; }
 .mobile-date-item:hover { background: var(--border); }
 .mobile-date-item.has-report { border-color: var(--accent); }
 .mobile-date-item.has-report .d-num { color: var(--accent); }
@@ -271,11 +279,10 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
   .sidebar.open { transform: translateX(0); }
   .sidebar-overlay.open { display: block; }
   .mobile-toggle { display: flex; }
-  .toolbar { padding: 0 12px; height: 48px; }
-  .toolbar-date { font-size: 14px; }
+  .toolbar { display: none; } /* hide toolbar on mobile */
   .keyboard-hint { display: none; }
   .mobile-date-bar { display: flex; }
-  .bottom-cal-bar { display: none; } /* hide bottom bar, use top bar */
+  .bottom-cal-bar { display: none; }
 }
 
 /* Bottom calendar bar for mobile */
@@ -746,6 +753,14 @@ function renderMobileDateBar() {
   const bar = document.getElementById('mobileDateBar');
   if (!bar) return;
   bar.innerHTML = '';
+
+  // Add "总览" button at the left
+  const listBtn = document.createElement('a');
+  listBtn.className = 'date-bar-btn';
+  listBtn.href = 'report_list.html';
+  listBtn.target = '_blank';
+  listBtn.textContent = '📋 总览';
+  bar.appendChild(listBtn);
 
   const today = new Date();
   const todayKey = formatDate(today);
