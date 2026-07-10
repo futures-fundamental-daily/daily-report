@@ -232,6 +232,39 @@ body.fullscreen .main { width: 100vw; }
 body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
 
 /* Responsive */
+/* Mobile top date bar */
+.mobile-date-bar {
+  display: none;
+  height: 72px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--card-bg);
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 10px 12px;
+  align-items: center;
+}
+.mobile-date-bar::-webkit-scrollbar { display: none; }
+.mobile-date-item {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 52px; height: 52px; border-radius: 10px; margin-right: 8px;
+  cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
+  position: relative; flex-shrink: 0;
+}
+.mobile-date-item .d-week { font-size: 10px; color: var(--text-muted); line-height: 1.2; }
+.mobile-date-item .d-num { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.mobile-date-item:hover { background: var(--border); }
+.mobile-date-item.has-report { border-color: var(--accent); }
+.mobile-date-item.has-report .d-num { color: var(--accent); }
+.mobile-date-item.active { background: var(--accent); border-color: var(--accent); }
+.mobile-date-item.active .d-week, .mobile-date-item.active .d-num { color: #0d1117; }
+.mobile-date-item.today::after {
+  content: ''; position: absolute; bottom: 3px; width: 4px; height: 4px;
+  background: var(--accent); border-radius: 50%;
+}
+.mobile-date-item.active.today::after { background: #0d1117; }
+
 @media (max-width: 768px) {
   .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
     transform: translateX(-100%); width: var(--sidebar-w-mobile); }
@@ -241,6 +274,8 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
   .toolbar { padding: 0 12px; height: 48px; }
   .toolbar-date { font-size: 14px; }
   .keyboard-hint { display: none; }
+  .mobile-date-bar { display: flex; }
+  .bottom-cal-bar { display: none; } /* hide bottom bar, use top bar */
 }
 
 /* Bottom calendar bar for mobile */
@@ -339,6 +374,9 @@ body.fullscreen .fullscreen-btn .icon::before { content: "⛶"; }
       </div>
     </div>
 
+    <!-- Mobile top date bar -->
+    <div class="mobile-date-bar" id="mobileDateBar"></div>
+
     <div class="content" id="content">
       <div class="loading" id="loading">
         <div class="loading-spinner"></div>
@@ -383,6 +421,7 @@ async function init() {
   renderSectors();
   renderFavorites();
   renderBottomCalBar();
+  renderMobileDateBar();
 
   // Determine initial date
   const today = formatDate(new Date());
@@ -454,6 +493,7 @@ function loadReport(date) {
 
   updateActiveStates();
   updateFavButton();
+  updateMobileDateBarActive();
 }
 
 function updateActiveStates() {
@@ -467,6 +507,10 @@ function updateActiveStates() {
   });
   // Bottom bar
   document.querySelectorAll('.bottom-cal-item').forEach(d => {
+    d.classList.toggle('active', d.dataset.date === currentDate);
+  });
+  // Mobile top bar
+  document.querySelectorAll('.mobile-date-item').forEach(d => {
     d.classList.toggle('active', d.dataset.date === currentDate);
   });
 }
@@ -691,6 +735,74 @@ function renderBottomCalBar() {
     el.onclick = () => loadReport(r.date);
     bar.appendChild(el);
   });
+}
+
+// ============================================
+// Mobile Top Date Bar
+// ============================================
+let mobileDateBarInited = false;
+
+function renderMobileDateBar() {
+  const bar = document.getElementById('mobileDateBar');
+  if (!bar) return;
+  bar.innerHTML = '';
+
+  const today = new Date();
+  const todayKey = formatDate(today);
+
+  // Build 30-day window centered around today: [today-15, today+15]
+  const start = new Date(today); start.setDate(start.getDate() - 15);
+  const end = new Date(today); end.setDate(end.getDate() + 15);
+
+  const dateSet = new Set(indexData.reports.map(r => r.date));
+  const dayNames = ['日','一','二','三','四','五','六'];
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dateKey = formatDate(d);
+    const hasReport = dateSet.has(dateKey);
+    const isToday = dateKey === todayKey;
+    const isActive = dateKey === currentDate;
+
+    const el = document.createElement('div');
+    el.className = 'mobile-date-item';
+    if (hasReport) el.classList.add('has-report');
+    if (isActive) el.classList.add('active');
+    if (isToday) el.classList.add('today');
+    el.dataset.date = dateKey;
+    el.innerHTML = `<span class="d-week">${dayNames[d.getDay()]}</span><span class="d-num">${d.getDate()}</span>`;
+
+    if (hasReport) {
+      el.onclick = () => loadReport(dateKey);
+    } else {
+      el.style.opacity = '0.3';
+      el.style.cursor = 'default';
+    }
+
+    bar.appendChild(el);
+  }
+
+  mobileDateBarInited = true;
+
+  // Scroll to active
+  setTimeout(() => {
+    const active = bar.querySelector('.mobile-date-item.active');
+    if (active) {
+      active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+    }
+  }, 50);
+}
+
+function updateMobileDateBarActive() {
+  if (!mobileDateBarInited) return;
+  const bar = document.getElementById('mobileDateBar');
+  if (!bar) return;
+  bar.querySelectorAll('.mobile-date-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.date === currentDate);
+  });
+  const active = bar.querySelector('.mobile-date-item.active');
+  if (active) {
+    active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
 }
 
 // ============================================
