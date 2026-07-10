@@ -193,6 +193,7 @@ body {
 .content { flex: 1; position: relative; overflow: hidden; background: var(--bg); }
 .content iframe {
   width: 100%; height: 100%; border: none; background: var(--bg);
+  opacity: 1; transition: opacity 0.2s ease;
 }
 
 /* Mobile Toggle */
@@ -480,12 +481,14 @@ function loadReport(date) {
   const loading = document.getElementById('loading');
 
   loading.style.display = 'flex';
-  frame.style.visibility = 'hidden';
+  frame.style.opacity = '0';
+  frame.style.pointerEvents = 'none';
 
   frame.src = ARCHIVE_PATH + report.filename;
   frame.onload = () => {
     loading.style.display = 'none';
-    frame.style.visibility = 'visible';
+    frame.style.opacity = '1';
+    frame.style.pointerEvents = 'auto';
     // Inject mobile header simplification for old reports
     try {
       const doc = frame.contentDocument || frame.contentWindow.document;
@@ -513,7 +516,8 @@ function loadReport(date) {
   setTimeout(() => {
     if (loading.style.display !== 'none') {
       loading.style.display = 'none';
-      frame.style.visibility = 'visible';
+      frame.style.opacity = '1';
+      frame.style.pointerEvents = 'auto';
     }
   }, 5000);
 
