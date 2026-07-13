@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>期货基本面日报 | 2026-07-10</title>
+    <title>期货基本面日报 | 2026-07-13</title>
     <style>
         * {
             margin: 0;
@@ -383,6 +383,109 @@
             color: #3fb950;
         }
         
+        /* 新闻舆情样式 */
+        .sentiment-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(31, 111, 235, 0.05);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .sentiment-label {
+            color: #c9d1d9;
+        }
+        
+        .sentiment-count {
+            color: #8b949e;
+            font-size: 12px;
+        }
+        
+        .news-item {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #8b949e;
+            border-bottom: 1px solid #21262d;
+        }
+        
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 历史分位样式 */
+        .percentile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .percentile-item {
+            text-align: center;
+            padding: 10px;
+            background: #0d1117;
+            border-radius: 8px;
+        }
+        
+        .p-label {
+            display: block;
+            font-size: 11px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+        
+        .p-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+        
+        .p-value.up {
+            color: #ff4444;
+        }
+        
+        .p-value.down {
+            color: #3fb950;
+        }
+        
+        .p-value.neutral {
+            color: #8b949e;
+        }
+        
+        .percentile-summary {
+            font-size: 12px;
+            color: #8b949e;
+            padding: 8px 0;
+            text-align: center;
+        }
+        
+        /* 宏观数据摘要 */
+        .macro-summary {
+            background: rgba(31, 111, 235, 0.1);
+            border: 1px solid rgba(31, 111, 235, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #c9d1d9;
+        }
+        
+        .macro-summary-title {
+            font-weight: 600;
+            color: #1f6feb;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        
+        .macro-item {
+            display: inline-block;
+            margin-right: 16px;
+            margin-bottom: 4px;
+        }
+        
         footer {
             text-align: center;
             padding: 30px 0;
@@ -430,6 +533,19 @@
             .sector-avg { font-size: 13px; padding: 6px 10px; }
             .stocks-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
             .stock-item { padding: 6px 10px; font-size: 12px; }
+            /* 移动端新闻舆情适配 */
+            .sentiment-bar { flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px 10px; }
+            .news-item { font-size: 11px; padding: 4px 10px; }
+            /* 移动端历史分位适配 */
+            .percentile-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .percentile-item { padding: 6px; }
+            .p-label { font-size: 10px; }
+            .p-value { font-size: 12px; }
+            .percentile-summary { font-size: 11px; }
+            /* 移动端宏观摘要适配 */
+            .macro-summary { padding: 8px 12px; margin-bottom: 12px; }
+            .macro-summary-title { font-size: 11px; }
+            .macro-item { display: block; margin-right: 0; margin-bottom: 2px; font-size: 11px; }
             footer { padding: 12px 0; margin-top: 12px; font-size: 11px; }
         }
     </style>
@@ -438,13 +554,20 @@
     <div class="container">
         <header>
             <h1>期货基本面日报</h1>
-            <div class="subtitle">2026-07-10 16:18 | 基于多维度量化分析</div>
+            <div class="subtitle">2026-07-13 16:30 | 基于多维度量化分析</div>
         </header>
         
         <div class="controls">
             <button class="btn" onclick="expandAll()">展开全部</button>
             <button class="btn" onclick="collapseAll()">收起全部</button>
         </div>
+        
+        
+                <div class="macro-summary">
+                    <div class="macro-summary-title">📊 宏观环境速览</div>
+                    <div><span class="macro-item">CPI同比: 101.0% (通胀)</span><span class="macro-item">PPI同比: 104.1% (通胀)</span><span class="macro-item">制造业PMI: 50.3 (扩张)</span><span class="macro-item">USD/CNY: 6.7811 (稳定)</span><span class="macro-item">1年期LPR: 0.00% (宽松)</span><span class="macro-item">M2同比: 0.0% (中性)</span></div>
+                </div>
+                
         
         <div class="filter-bar">
             <button class="filter-btn active" onclick="filterSector('all')">全部</button>
@@ -460,9 +583,474 @@
         <div class="card">
             <div class="card-header" onclick="toggleCard(this)">
                 <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">棕榈油 P</span>
+                    <span class="score">7.5/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">农产品</span>
+                    <span class="tag">短期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">7878.00</span>
+                    <span class="change up">+1.44%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">7760-7917</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">7563</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和上涨</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 棕榈油：温和上涨，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动1.4%，走势相对平稳</div><div class="logic-item">基本面：马棕产量恢复，但出口强劲</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 产量季节性回升</div><div class="risk-item">⚠️ 豆棕价差压制</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">2.88%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">3.71%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">1.99%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">农产品板块今日整体强势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">菜粕 RM</span>
+                    <span class="score">7.3/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">农产品</span>
+                    <span class="tag">短期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">2479.00</span>
+                    <span class="change up">+1.56%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">2442-2491</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">2380</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和上涨</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 菜粕：温和上涨，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动1.6%，走势相对平稳</div><div class="logic-item">基本面：菜籽到港量增加，库存回升</div><div class="logic-item">成交活跃（493万手），资金参与度较高</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 天气炒作结束后回落风险</div><div class="risk-item">⚠️ 豆粕替代效应</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">0.88%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">1.68%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">1.46%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">农产品板块今日整体强势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">铅 PB</span>
+                    <span class="score">7.2/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">有色金属</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">19885.00</span>
+                    <span class="change up">+0.84%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">19587-19984</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">19090</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">横盘震荡</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 铅：横盘震荡，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动0.8%，走势相对平稳</div><div class="logic-item">基本面：原生铅供应偏紧，再生铅利润承压</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 电池回收政策不确定性</div><div class="risk-item">⚠️ 淡季需求转弱</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">1.45%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">1.24%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">1.11%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">有色金属板块今日整体震荡</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">铜 CU</span>
+                    <span class="score">7.0/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">有色金属</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">78500.00</span>
+                    <span class="change down">-1.08%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">77322-78892</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">75360</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 铜：温和下跌，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.1%，走势相对平稳</div><div class="logic-item">基本面：铜矿供应扰动频繁，精铜库存低位</div><div class="logic-item">舆情：近24小时1条相关新闻，整体情绪乐观</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 价格处于历史高位区间</div><div class="risk-item">⚠️ 海外经济放缓</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-1.78%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-2.37%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">1.01%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">有色金属板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="up">乐观</span></span>
+                        <span class="sentiment-count">相关新闻: 1条</span>
+                    </div>
+                    <div class="news-item">📈 洛阳钼业：预计2026年上半年净利润同比增长78.76%到90.29%...</div>
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">多晶硅 PS</span>
+                    <span class="score">6.4/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">新能源</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">36110.00</span>
+                    <span class="change down">-0.66%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">35749-36471</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">34304</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">横盘震荡</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 多晶硅：横盘震荡，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-0.7%，走势相对平稳</div><div class="logic-item">基本面：供需双弱，库存低位</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 产能过剩背景未根本改变</div><div class="risk-item">⚠️ 价格处于反弹阶段</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-1.24%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-1.59%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">0.64%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">新能源板块今日整体震荡</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
                     <span class="stars">★☆☆</span>
                     <span class="product-name">纯碱 SA</span>
-                    <span class="score">5.7/10</span>
+                    <span class="score">5.8/10</span>
                 </div>
                 <div class="card-tags">
                     <span class="tag direction-neutral">中性</span>
@@ -471,31 +1059,31 @@
                     <span class="tag">置信度:低</span>
                 </div>
                 <div class="card-quote">
-                    <span class="price">2272.82</span>
-                    <span class="change up">+3.31%</span>
+                    <span class="price">1063.00</span>
+                    <span class="change down">-1.85%</span>
                 </div>
             </div>
             <div class="card-body">
                 <div class="quick-info">
                     <div class="info-row">
                         <span class="info-label">入场区间</span>
-                        <span class="info-value">2250-2296</span>
+                        <span class="info-value">1052-1074</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">止损位</span>
-                        <span class="info-value stop">2159</span>
+                        <span class="info-value stop">1010</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">动量</span>
-                        <span class="info-value">加速上涨</span>
+                        <span class="info-value">温和下跌</span>
                     </div>
                 </div>
                 <div class="summary">
-                    💡 纯碱：加速上涨，建议观望
+                    💡 纯碱：温和下跌，建议观望
                 </div>
                 <div class="section">
                     <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（59%），方向待定</div><div class="logic-item">今日大涨3.3%，短期动能较强</div><div class="logic-item">基本面：新产能持续投放，供应压力较大</div><div class="logic-item">宏观：光伏玻璃需求增量被供给增量覆盖</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.9%，走势相对平稳</div><div class="logic-item">基本面：新产能持续投放，供应压力较大</div>
                 </div>
                 <div class="section risk-section">
                     <div class="section-title">⚠️ 风险提示</div>
@@ -506,183 +1094,45 @@
                     <div class="quant-grid">
                         <div class="quant-item">
                             <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">5.03%</div>
+                            <div class="quant-value down">-2.69%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">5.92%</div>
+                            <div class="quant-value down">-4.36%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">波动率</div>
-                            <div class="quant-value">4.65%</div>
+                            <div class="quant-value">2.57%</div>
                         </div>
                     </div>
                 </div>
                 <div class="section">
                     <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">能源化工板块今日整体强势</div>
+                    <div class="sector-info">能源化工板块今日整体弱势</div>
                 </div>
                 
+                
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+1.20%</span> | 情绪: 强势</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">远兴能源</span><span class="stock-change up">+3.15%</span></div><div class="stock-item"><span class="stock-name">三友化工</span><span class="stock-change down">-0.46%</span></div><div class="stock-item"><span class="stock-name">山东海化</span><span class="stock-change up">+0.40%</span></div>
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
                     </div>
+                    
                 </div>
             
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">
-                <div class="card-title">
-                    <span class="stars">★☆☆</span>
-                    <span class="product-name">螺纹钢 RB</span>
-                    <span class="score">5.0/10</span>
-                </div>
-                <div class="card-tags">
-                    <span class="tag direction-neutral">中性</span>
-                    <span class="tag sector">黑色系</span>
-                    <span class="tag">中期</span>
-                    <span class="tag">置信度:低</span>
-                </div>
-                <div class="card-quote">
-                    <span class="price">3719.88</span>
-                    <span class="change up">+3.33%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="quick-info">
-                    <div class="info-row">
-                        <span class="info-label">入场区间</span>
-                        <span class="info-value">3683-3757</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">止损位</span>
-                        <span class="info-value stop">3534</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">动量</span>
-                        <span class="info-value">加速上涨</span>
-                    </div>
-                </div>
-                <div class="summary">
-                    💡 螺纹钢：加速上涨，建议观望
-                </div>
-                <div class="section">
-                    <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（48%），方向待定</div><div class="logic-item">今日大涨3.3%，短期动能较强</div><div class="logic-item">基本面：钢材表需季节性回落，库存累积</div><div class="logic-item">宏观：地产政策托底但传导较慢，基建边际发力</div><div class="logic-item">成交活跃（482万手），资金参与度较高</div>
-                </div>
-                <div class="section risk-section">
-                    <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 淡季累库超预期</div><div class="risk-item">⚠️ 粗钢平控政策执行力度</div>
-                </div>
-                <div class="section">
-                    <div class="section-title">📈 量化数据</div>
-                    <div class="quant-grid">
-                        <div class="quant-item">
-                            <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">5.72%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">12.67%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">波动率</div>
-                            <div class="quant-value">4.04%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">黑色系板块今日整体强势</div>
-                </div>
                 
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="down">-0.15%</span> | 情绪: 震荡</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">宝钢股份</span><span class="stock-change up">+0.44%</span></div><div class="stock-item"><span class="stock-name">华菱钢铁</span><span class="stock-change down">-0.91%</span></div><div class="stock-item"><span class="stock-name">鞍钢股份</span><span class="stock-change down">-0.03%</span></div>
-                    </div>
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
                 </div>
             
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">
-                <div class="card-title">
-                    <span class="stars">★☆☆</span>
-                    <span class="product-name">铜 CU</span>
-                    <span class="score">5.0/10</span>
-                </div>
-                <div class="card-tags">
-                    <span class="tag direction-neutral">中性</span>
-                    <span class="tag sector">有色金属</span>
-                    <span class="tag">中期</span>
-                    <span class="tag">置信度:低</span>
-                </div>
-                <div class="card-quote">
-                    <span class="price">80386.80</span>
-                    <span class="change up">+3.06%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="quick-info">
-                    <div class="info-row">
-                        <span class="info-label">入场区间</span>
-                        <span class="info-value">79583-81191</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">止损位</span>
-                        <span class="info-value stop">76367</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">动量</span>
-                        <span class="info-value">加速上涨</span>
-                    </div>
-                </div>
-                <div class="summary">
-                    💡 铜：加速上涨，建议观望
-                </div>
-                <div class="section">
-                    <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史极高区间（85%），追高风险较大</div><div class="logic-item">今日大涨3.1%，短期动能较强</div><div class="logic-item">基本面：铜矿供应扰动频繁，精铜库存低位</div><div class="logic-item">宏观：新能源+电网投资支撑长期需求，但短期受宏观压制</div><div class="logic-item">成交活跃（254万手），资金参与度较高</div>
-                </div>
-                <div class="section risk-section">
-                    <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 价格处于历史高位区间</div><div class="risk-item">⚠️ 海外经济放缓</div><div class="risk-item">⚠️ 价格处于历史高位区间，回调风险加大</div>
-                </div>
-                <div class="section">
-                    <div class="section-title">📈 量化数据</div>
-                    <div class="quant-grid">
-                        <div class="quant-item">
-                            <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">3.12%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">9.07%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">波动率</div>
-                            <div class="quant-value">3.02%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">有色金属板块今日整体强势</div>
-                </div>
-                
-                <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+0.59%</span> | 情绪: 震荡</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">江西铜业</span><span class="stock-change up">+0.26%</span></div><div class="stock-item"><span class="stock-name">云南铜业</span><span class="stock-change up">+0.86%</span></div><div class="stock-item"><span class="stock-name">紫金矿业</span><span class="stock-change up">+0.67%</span></div>
-                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
                 </div>
             
             </div>
@@ -693,7 +1143,7 @@
                 <div class="card-title">
                     <span class="stars">★☆☆</span>
                     <span class="product-name">豆粕 M</span>
-                    <span class="score">4.9/10</span>
+                    <span class="score">5.4/10</span>
                 </div>
                 <div class="card-tags">
                     <span class="tag direction-neutral">中性</span>
@@ -702,19 +1152,19 @@
                     <span class="tag">置信度:低</span>
                 </div>
                 <div class="card-quote">
-                    <span class="price">3201.28</span>
-                    <span class="change up">+0.04%</span>
+                    <span class="price">3111.00</span>
+                    <span class="change up">+0.58%</span>
                 </div>
             </div>
             <div class="card-body">
                 <div class="quick-info">
                     <div class="info-row">
                         <span class="info-label">入场区间</span>
-                        <span class="info-value">3169-3233</span>
+                        <span class="info-value">3080-3142</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">止损位</span>
-                        <span class="info-value stop">3041</span>
+                        <span class="info-value stop">2955</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">动量</span>
@@ -726,7 +1176,7 @@
                 </div>
                 <div class="section">
                     <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（29%），方向待定</div><div class="logic-item">今日波动0.0%，走势相对平稳</div><div class="logic-item">基本面：美豆种植面积超预期，但生长期天气仍有不确定性</div><div class="logic-item">宏观：南美大豆集中到港，国内库存回升</div><div class="logic-item">成交活跃（493万手），资金参与度较高</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动0.6%，走势相对平稳</div><div class="logic-item">基本面：美豆种植面积超预期，但生长期天气仍有不确定性</div><div class="logic-item">舆情：近24小时1条相关新闻，整体情绪悲观</div><div class="logic-item">成交活跃（217万手），资金参与度较高</div>
                 </div>
                 <div class="section risk-section">
                     <div class="section-title">⚠️ 风险提示</div>
@@ -737,15 +1187,15 @@
                     <div class="quant-grid">
                         <div class="quant-item">
                             <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">0.06%</div>
+                            <div class="quant-value up">0.35%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">0.09%</div>
+                            <div class="quant-value up">1.58%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">波动率</div>
-                            <div class="quant-value">0.04%</div>
+                            <div class="quant-value">0.64%</div>
                         </div>
                     </div>
                 </div>
@@ -754,166 +1204,28 @@
                     <div class="sector-info">农产品板块今日整体震荡</div>
                 </div>
                 
-                <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="down">-2.05%</span> | 情绪: 弱势</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">牧原股份</span><span class="stock-change down">-1.82%</span></div><div class="stock-item"><span class="stock-name">温氏股份</span><span class="stock-change down">-1.67%</span></div><div class="stock-item"><span class="stock-name">新希望</span><span class="stock-change down">-2.94%</span></div>
-                    </div>
-                </div>
-            
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">
-                <div class="card-title">
-                    <span class="stars">★☆☆</span>
-                    <span class="product-name">铁矿石 I</span>
-                    <span class="score">4.7/10</span>
-                </div>
-                <div class="card-tags">
-                    <span class="tag direction-neutral">中性</span>
-                    <span class="tag sector">黑色系</span>
-                    <span class="tag">中期</span>
-                    <span class="tag">置信度:低</span>
-                </div>
-                <div class="card-quote">
-                    <span class="price">883.23</span>
-                    <span class="change up">+3.91%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="quick-info">
-                    <div class="info-row">
-                        <span class="info-label">入场区间</span>
-                        <span class="info-value">874-892</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">止损位</span>
-                        <span class="info-value stop">839</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">动量</span>
-                        <span class="info-value">加速上涨</span>
-                    </div>
-                </div>
-                <div class="summary">
-                    💡 铁矿石：加速上涨，建议观望
-                </div>
-                <div class="section">
-                    <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（74%），方向待定</div><div class="logic-item">今日大涨3.9%，短期动能较强</div><div class="logic-item">基本面：铁矿发运高位，港口库存累积</div><div class="logic-item">宏观：钢厂利润压缩，铁水产量见顶回落</div><div class="logic-item">成交活跃（500万手），资金参与度较高</div>
-                </div>
-                <div class="section risk-section">
-                    <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 发运量回升</div><div class="risk-item">⚠️ 终端需求不及预期</div>
-                </div>
-                <div class="section">
-                    <div class="section-title">📈 量化数据</div>
-                    <div class="quant-grid">
-                        <div class="quant-item">
-                            <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">6.63%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">6.15%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">波动率</div>
-                            <div class="quant-value">3.86%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">黑色系板块今日整体强势</div>
-                </div>
                 
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+0.23%</span> | 情绪: 震荡</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">河钢股份</span><span class="stock-change down">-1.55%</span></div><div class="stock-item"><span class="stock-name">鞍钢股份</span><span class="stock-change down">-1.10%</span></div><div class="stock-item"><span class="stock-name">方大炭素</span><span class="stock-change up">+3.85%</span></div>
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="down">悲观</span></span>
+                        <span class="sentiment-count">相关新闻: 1条</span>
                     </div>
+                    <div class="news-item">📉 牧原股份：预计2026年上半年由盈转亏，净利润亏损57亿-67亿元...</div>
                 </div>
             
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">
-                <div class="card-title">
-                    <span class="stars">★☆☆</span>
-                    <span class="product-name">多晶硅 PS</span>
-                    <span class="score">4.5/10</span>
-                </div>
-                <div class="card-tags">
-                    <span class="tag direction-neutral">中性</span>
-                    <span class="tag sector">新能源</span>
-                    <span class="tag">中期</span>
-                    <span class="tag">置信度:中</span>
-                </div>
-                <div class="card-quote">
-                    <span class="price">39060.20</span>
-                    <span class="change up">+2.79%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="quick-info">
-                    <div class="info-row">
-                        <span class="info-label">入场区间</span>
-                        <span class="info-value">38670-39451</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">止损位</span>
-                        <span class="info-value stop">37107</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">动量</span>
-                        <span class="info-value">温和上涨</span>
-                    </div>
-                </div>
-                <div class="summary">
-                    💡 多晶硅：温和上涨，建议观望
-                </div>
-                <div class="section">
-                    <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（70%），方向待定</div><div class="logic-item">今日大涨2.8%，短期动能较强</div><div class="logic-item">基本面：供需双弱，库存低位</div><div class="logic-item">宏观：光伏装机增速放缓，但N型电池技术迭代带来结构性需求</div>
-                </div>
-                <div class="section risk-section">
-                    <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 产能过剩背景未根本改变</div><div class="risk-item">⚠️ 价格处于反弹阶段</div><div class="risk-item">⚠️ 价格上涨但成交量萎缩，量价背离</div>
-                </div>
-                <div class="section">
-                    <div class="section-title">📈 量化数据</div>
-                    <div class="quant-grid">
-                        <div class="quant-item">
-                            <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">2.93%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">8.23%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">波动率</div>
-                            <div class="quant-value">3.60%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">新能源板块今日整体强势</div>
-                </div>
                 
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+0.30%</span> | 情绪: 震荡</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">隆基绿能</span><span class="stock-change down">-1.89%</span></div><div class="stock-item"><span class="stock-name">通威股份</span><span class="stock-change up">+3.00%</span></div><div class="stock-item"><span class="stock-name">大全能源</span><span class="stock-change down">-0.29%</span></div>
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
                     </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
                 </div>
             
             </div>
@@ -924,28 +1236,28 @@
                 <div class="card-title">
                     <span class="stars">★☆☆</span>
                     <span class="product-name">原油 SC</span>
-                    <span class="score">4.3/10</span>
+                    <span class="score">5.3/10</span>
                 </div>
                 <div class="card-tags">
                     <span class="tag direction-neutral">中性</span>
                     <span class="tag sector">能源化工</span>
                     <span class="tag">中期</span>
-                    <span class="tag">置信度:中</span>
+                    <span class="tag">置信度:低</span>
                 </div>
                 <div class="card-quote">
-                    <span class="price">570.89</span>
-                    <span class="change down">-1.57%</span>
+                    <span class="price">606.60</span>
+                    <span class="change down">-1.40%</span>
                 </div>
             </div>
             <div class="card-body">
                 <div class="quick-info">
                     <div class="info-row">
                         <span class="info-label">入场区间</span>
-                        <span class="info-value">565-577</span>
+                        <span class="info-value">601-613</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">止损位</span>
-                        <span class="info-value stop">542</span>
+                        <span class="info-value stop">576</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">动量</span>
@@ -957,26 +1269,26 @@
                 </div>
                 <div class="section">
                     <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（49%），方向待定</div><div class="logic-item">今日波动-1.6%，走势相对平稳</div><div class="logic-item">基本面：OPEC+延长减产，但需求端担忧仍存</div><div class="logic-item">宏观：地缘风险溢价回落，库存去化缓慢</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.4%，走势相对平稳</div><div class="logic-item">基本面：OPEC+延长减产，但需求端担忧仍存</div><div class="logic-item">舆情：近24小时3条相关新闻，整体情绪悲观</div>
                 </div>
                 <div class="section risk-section">
                     <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 全球经济放缓拖累需求</div><div class="risk-item">⚠️ 美元走强</div>
+                    <div class="risk-item">⚠️ 全球经济放缓拖累需求</div><div class="risk-item">⚠️ 美元走强</div><div class="risk-item">⚠️ 舆情情绪悲观（悲观），需警惕情绪发酵</div>
                 </div>
                 <div class="section">
                     <div class="section-title">📈 量化数据</div>
                     <div class="quant-grid">
                         <div class="quant-item">
                             <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value down">-1.26%</div>
+                            <div class="quant-value down">-2.26%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value down">-2.25%</div>
+                            <div class="quant-value down">-4.74%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">波动率</div>
-                            <div class="quant-value">1.78%</div>
+                            <div class="quant-value">1.39%</div>
                         </div>
                     </div>
                 </div>
@@ -985,12 +1297,28 @@
                     <div class="sector-info">能源化工板块今日整体弱势</div>
                 </div>
                 
+                
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+1.46%</span> | 情绪: 强势</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">中国石油</span><span class="stock-change up">+3.12%</span></div><div class="stock-item"><span class="stock-name">中国石化</span><span class="stock-change down">-1.98%</span></div><div class="stock-item"><span class="stock-name">中国海油</span><span class="stock-change up">+3.52%</span></div>
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="down">悲观</span></span>
+                        <span class="sentiment-count">相关新闻: 3条</span>
                     </div>
+                    <div class="news-item">📉 ...</div><div class="news-item">📉 特朗普宣布停火协议结束，称：同意继续与伊朗对话...</div>
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
                 </div>
             
             </div>
@@ -1000,29 +1328,122 @@
             <div class="card-header" onclick="toggleCard(this)">
                 <div class="card-title">
                     <span class="stars">★☆☆</span>
-                    <span class="product-name">铅 PB</span>
-                    <span class="score">4.2/10</span>
+                    <span class="product-name">铁矿石 I</span>
+                    <span class="score">5.3/10</span>
                 </div>
                 <div class="card-tags">
                     <span class="tag direction-neutral">中性</span>
-                    <span class="tag sector">有色金属</span>
+                    <span class="tag sector">黑色系</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">805.00</span>
+                    <span class="change down">-2.66%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">797-813</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">765</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 铁矿石：温和下跌，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日大跌-2.7%，短期动能偏弱</div><div class="logic-item">基本面：铁矿发运高位，港口库存累积</div><div class="logic-item">舆情：近24小时2条相关新闻，整体情绪中性</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 发运量回升</div><div class="risk-item">⚠️ 终端需求不及预期</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-3.91%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-10.23%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">2.98%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">黑色系板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 2条</span>
+                    </div>
+                    <div class="news-item">➡️ 特朗普宣布停火协议结束，称：同意继续与伊朗对话...</div><div class="news-item">➡️ 洛阳钼业：预计2026年上半年净利润同比增长78.76%到90.29%...</div>
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★☆☆</span>
+                    <span class="product-name">螺纹钢 RB</span>
+                    <span class="score">4.5/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">黑色系</span>
                     <span class="tag">中期</span>
                     <span class="tag">置信度:中</span>
                 </div>
                 <div class="card-quote">
-                    <span class="price">19088.55</span>
-                    <span class="change down">-2.11%</span>
+                    <span class="price">3487.00</span>
+                    <span class="change down">-1.52%</span>
                 </div>
             </div>
             <div class="card-body">
                 <div class="quick-info">
                     <div class="info-row">
                         <span class="info-label">入场区间</span>
-                        <span class="info-value">18898-19279</span>
+                        <span class="info-value">3452-3522</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">止损位</span>
-                        <span class="info-value stop">18134</span>
+                        <span class="info-value stop">3313</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">动量</span>
@@ -1030,198 +1451,60 @@
                     </div>
                 </div>
                 <div class="summary">
-                    💡 铅：温和下跌，建议观望
+                    💡 螺纹钢：温和下跌，建议观望
                 </div>
                 <div class="section">
                     <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（64%），方向待定</div><div class="logic-item">今日大跌-2.1%，短期动能偏弱</div><div class="logic-item">基本面：原生铅供应偏紧，再生铅利润承压</div><div class="logic-item">宏观：美联储降息预期摇摆，美元走强压制有色</div><div class="logic-item">成交活跃（453万手），资金参与度较高</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.5%，走势相对平稳</div><div class="logic-item">基本面：钢材表需季节性回落，库存累积</div><div class="logic-item">舆情：近24小时1条相关新闻，整体情绪悲观</div>
                 </div>
                 <div class="section risk-section">
                     <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 电池回收政策不确定性</div><div class="risk-item">⚠️ 淡季需求转弱</div>
+                    <div class="risk-item">⚠️ 淡季累库超预期</div><div class="risk-item">⚠️ 粗钢平控政策执行力度</div>
                 </div>
                 <div class="section">
                     <div class="section-title">📈 量化数据</div>
                     <div class="quant-grid">
                         <div class="quant-item">
                             <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value down">-3.52%</div>
+                            <div class="quant-value down">-2.71%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value down">-7.31%</div>
+                            <div class="quant-value down">-2.26%</div>
                         </div>
                         <div class="quant-item">
                             <div class="quant-label">波动率</div>
-                            <div class="quant-value">3.05%</div>
+                            <div class="quant-value">1.96%</div>
                         </div>
                     </div>
                 </div>
                 <div class="section">
                     <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">有色金属板块今日整体弱势</div>
+                    <div class="sector-info">黑色系板块今日整体弱势</div>
                 </div>
                 
+                
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+1.56%</span> | 情绪: 强势</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">豫光金铅</span><span class="stock-change up">+2.06%</span></div><div class="stock-item"><span class="stock-name">驰宏锌锗</span><span class="stock-change up">+2.23%</span></div><div class="stock-item"><span class="stock-name">中金岭南</span><span class="stock-change down">-0.19%</span></div>
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="down">悲观</span></span>
+                        <span class="sentiment-count">相关新闻: 1条</span>
                     </div>
+                    <div class="news-item">📉 万科A：预计2026年上半年净利润亏损120亿元-150亿元，上年同期亏损119...</div>
                 </div>
             
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">
-                <div class="card-title">
-                    <span class="stars">☆☆☆</span>
-                    <span class="product-name">菜粕 RM</span>
-                    <span class="score">3.9/10</span>
-                </div>
-                <div class="card-tags">
-                    <span class="tag direction-bear">看空</span>
-                    <span class="tag sector">农产品</span>
-                    <span class="tag">短期</span>
-                    <span class="tag">置信度:中</span>
-                </div>
-                <div class="card-quote">
-                    <span class="price">2815.68</span>
-                    <span class="change up">+0.56%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="quick-info">
-                    <div class="info-row">
-                        <span class="info-label">入场区间</span>
-                        <span class="info-value">2802-2858</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">止损位</span>
-                        <span class="info-value stop">2928</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">动量</span>
-                        <span class="info-value">横盘震荡</span>
-                    </div>
-                </div>
-                <div class="summary">
-                    💡 菜粕：横盘震荡，建议偏空思路
-                </div>
-                <div class="section">
-                    <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（54%），方向待定</div><div class="logic-item">今日波动0.6%，走势相对平稳</div><div class="logic-item">基本面：菜籽到港量增加，库存回升</div><div class="logic-item">宏观：中加贸易关系缓和，菜籽进口来源多元化</div><div class="logic-item">成交活跃（488万手），资金参与度较高</div>
-                </div>
-                <div class="section risk-section">
-                    <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 天气炒作结束后回落风险</div><div class="risk-item">⚠️ 豆粕替代效应</div>
-                </div>
-                <div class="section">
-                    <div class="section-title">📈 量化数据</div>
-                    <div class="quant-grid">
-                        <div class="quant-item">
-                            <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value up">0.91%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value up">0.66%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">波动率</div>
-                            <div class="quant-value">0.78%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">农产品板块今日整体震荡</div>
-                </div>
                 
                 <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+3.16%</span> | 情绪: 强势</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">金龙鱼</span><span class="stock-change up">+3.11%</span></div><div class="stock-item"><span class="stock-name">海大集团</span><span class="stock-change up">+3.21%</span></div>
-                    </div>
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
                 </div>
             
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">
-                <div class="card-title">
-                    <span class="stars">☆☆☆</span>
-                    <span class="product-name">棕榈油 P</span>
-                    <span class="score">3.7/10</span>
-                </div>
-                <div class="card-tags">
-                    <span class="tag direction-bear">看空</span>
-                    <span class="tag sector">农产品</span>
-                    <span class="tag">短期</span>
-                    <span class="tag">置信度:中</span>
-                </div>
-                <div class="card-quote">
-                    <span class="price">7700.16</span>
-                    <span class="change down">-1.28%</span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="quick-info">
-                    <div class="info-row">
-                        <span class="info-label">入场区间</span>
-                        <span class="info-value">7662-7816</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">止损位</span>
-                        <span class="info-value stop">8008</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">动量</span>
-                        <span class="info-value">温和下跌</span>
-                    </div>
-                </div>
-                <div class="summary">
-                    💡 棕榈油：温和下跌，建议偏空思路
-                </div>
-                <div class="section">
-                    <div class="section-title">AI分析逻辑</div>
-                    <div class="logic-item">价格处于历史中位区间（57%），方向待定</div><div class="logic-item">今日波动-1.3%，走势相对平稳</div><div class="logic-item">基本面：马棕产量恢复，但出口强劲</div><div class="logic-item">宏观：印尼出口政策变化，生物柴油掺混比例提升</div><div class="logic-item">成交活跃（481万手），资金参与度较高</div>
-                </div>
-                <div class="section risk-section">
-                    <div class="section-title">⚠️ 风险提示</div>
-                    <div class="risk-item">⚠️ 产量季节性回升</div><div class="risk-item">⚠️ 豆棕价差压制</div>
-                </div>
-                <div class="section">
-                    <div class="section-title">📈 量化数据</div>
-                    <div class="quant-grid">
-                        <div class="quant-item">
-                            <div class="quant-label">近5日涨跌</div>
-                            <div class="quant-value down">-1.30%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">近20日涨跌</div>
-                            <div class="quant-value down">-4.24%</div>
-                        </div>
-                        <div class="quant-item">
-                            <div class="quant-label">波动率</div>
-                            <div class="quant-value">1.43%</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="section-title">🌍 板块与产区</div>
-                    <div class="sector-info">农产品板块今日整体弱势</div>
-                </div>
-                
-                <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="up">+0.70%</span> | 情绪: 震荡</div>
-                    <div class="stocks-list">
-                        <div class="stock-item"><span class="stock-name">金龙鱼</span><span class="stock-change down">-1.68%</span></div><div class="stock-item"><span class="stock-name">西王食品</span><span class="stock-change up">+3.09%</span></div>
-                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
                 </div>
             
             </div>
@@ -1231,7 +1514,7 @@
         
         <footer>
             <p>⚠️ 本报告基于公开信息整理，仅供参考，不构成投资建议。</p>
-            <p>数据更新时间：2026-07-10 16:18</p>
+            <p>数据更新时间：2026-07-13 16:30</p>
         </footer>
     </div>
     

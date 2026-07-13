@@ -453,8 +453,88 @@ function filterSector(sector) {
 
 | 日期 | 修改内容 |
 |------|----------|
+| 2026-07-10 | **Phase 3 分析层升级**：新增新闻舆情监控（华尔街见闻NLP情绪分析）、宏观数据摘要（CPI/PPI/PMI/LPR/M2/汇率/准备金率）、历史价格分位图（近1年/3年分位+均线趋势） |
+| 2026-07-10 | **数据源真实化**：fetcher.py v2.0 统一新浪期货API + akshare备用，10个品种全部接入真实行情（PS多晶硅通过akshare CF市场） |
+| 2026-07-10 | **流水线扩展**：main.py 6步流水线（行情→新闻→宏观→分析→生成→推送） |
 | 2026-07-10 | iframe 加载策略：iframe 始终可见，用 loading 遮罩层覆盖，避免移动端初始滚动失效 |
 | 2026-07-10 | iframe 注入旧报告样式：完整 @media 规则（含 .card / .quick-info / .quant-grid / .stocks-list / footer 等全部选择器） |
 | 2026-07-10 | body 添加 `overflow-y: auto; -webkit-overflow-scrolling: touch;` |
 | 2026-07-10 | 添加 report_viewer.html（移动端顶部日期条 + toolbar 隐藏）和 report_list.html |
 | 2026-07-10 | 添加完整移动端 @media 样式，header 改为 flex row，隐藏 controls/filter-bar |
+
+---
+
+## 10. 新增模块规范（Phase 3）
+
+### 10.1 新闻舆情监控（news_analyzer.py）
+
+**数据源**：华尔街见闻 API (`api.wallstreetcn.com/apiv1/content/lives`)
+
+**分析逻辑**：
+- 抓取近24小时50条要闻
+- 通过品种关键词匹配（PRODUCT_KEYWORDS 映射表）
+- 情感词典分析（正/负面词库），输出 sentiment ∈ [-1, +1]
+- 标签：乐观(>0.2) / 中性 / 悲观(<-0.2)
+
+**输出**：`data/news_sentiment_YYYYMMDD.json`
+
+**报告展示**：每个品种卡片内新增 "📰 舆情监控（近24h）" section
+
+---
+
+### 10.2 宏观数据（macro_data.py）
+
+**数据源**：akshare + 新浪汇率API
+
+**指标列表**：CPI同比、PPI同比、制造业PMI、USD/CNY、1年期LPR、M2同比、存款准备金率
+
+**品种-宏观映射**：
+- 有色(CU/PB)：PMI + 汇率
+- 能源化工(SC/SA)：PPI + M2
+- 黑色(RB/I)：PMI
+- 农产品(M/RM/P)：CPI
+
+**输出**：`data/macro_YYYYMMDD.json`
+
+**报告展示**：controls 下方新增 "📊 宏观环境速览" 横幅
+
+---
+
+### 10.3 历史价格分位（history_tracker.py）
+
+**数据存储**：`data/history/{CODE}_history.json`（每日追加）
+
+**计算指标**：近1年分位、近3年分位、20日/60日均线、20日波动率、均线趋势
+
+**评分权重**：价格位置评分优先使用动态1年分位
+
+**报告展示**：每个品种卡片内新增 "📊 历史价格分位" section
+
+---
+
+### 10.4 评分模型 v2.0（analyzer.py）
+
+**权重调整**：
+| 维度 | 旧权重 | 新权重 |
+|------|--------|--------|
+| 价格位置 | 20% | 20% |
+| 动量趋势 | 20% | 20% |
+| 基本面 | 30% | 20% |
+| 宏观环境 | 20% | 15% |
+| **新闻情绪** | - | **15%** |
+| 资金流向 | 10% | 10% |
+
+---
+
+## 11. 流水线步骤
+
+```
+[1/6] 抓取行情数据    → fetcher.py
+[2/6] 抓取新闻舆情    → news_analyzer.py
+[3/6] 抓取宏观数据    → macro_data.py
+[4/6] 执行AI分析      → analyzer.py
+[5/6] 生成HTML报告    → generator.py
+[6/6] 推送报告        → pusher.py
+```
+
+**定时**：工作日 16:30

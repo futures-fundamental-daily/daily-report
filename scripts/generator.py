@@ -12,6 +12,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent
 ANALYSIS_DIR = BASE_DIR / "analysis"
+DATA_DIR = BASE_DIR / "data"
 TEMPLATES_DIR = BASE_DIR / "templates"
 OUTPUT_DIR = BASE_DIR / "output"
 CONFIG_PATH = BASE_DIR / "config.json"
@@ -93,32 +94,79 @@ def generate_html():
         for r in risks:
             risk_html += f'<div class="risk-item">⚠️ {r}</div>'
         
+        # 新闻情绪HTML - 新增
+        news_html = ""
+        if item.get("news_sentiment"):
+            ns = item["news_sentiment"]
+            sentiment_label = ns.get("label", "中性")
+            sentiment_score = ns.get("sentiment", 0)
+            news_count = ns.get("news_count", 0)
+            
+            sentiment_class = "up" if sentiment_score > 0.2 else "down" if sentiment_score < -0.2 else "neutral"
+            sentiment_emoji = "📈" if sentiment_score > 0.2 else "📉" if sentiment_score < -0.2 else "➡️"
+            
+            top_news_html = ""
+            for news in ns.get("top_news", [])[:2]:
+                top_news_html += f'<div class="news-item">{sentiment_emoji} {news.get("title", "")[:40]}...</div>'
+            
+            news_html = f'''
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="{sentiment_class}">{sentiment_label}</span></span>
+                        <span class="sentiment-count">相关新闻: {news_count}条</span>
+                    </div>
+                    {top_news_html}
+                </div>
+            '''
+        
+        # 历史分位HTML - 新增
+        percentile_html = ""
+        if item.get("history_percentile"):
+            hp = item["history_percentile"]
+            percentile_text = item.get("history_text", "")
+            
+            p1y = hp.get("percentile_1y", "N/A")
+            p3y = hp.get("percentile_3y", None)
+            trend = hp.get("trend", "")
+            
+            percentile_items = f'''
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">{p1y}%</span>
+                </div>
+            '''
+            if p3y:
+                percentile_items += f'''
+                <div class="percentile-item">
+                    <span class="p-label">近3年分位</span>
+                    <span class="p-value">{p3y}%</span>
+                </div>
+                '''
+            if trend:
+                trend_class = "up" if "多头" in trend else "down" if "空头" in trend else "neutral"
+                percentile_items += f'''
+                <div class="percentile-item">
+                    <span class="p-label">均线趋势</span>
+                    <span class="p-value {trend_class}">{trend}</span>
+                </div>
+                '''
+            
+            percentile_html = f'''
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        {percentile_items}
+                    </div>
+                    <div class="percentile-summary">{percentile_text}</div>
+                </div>
+            '''
+        
         # 关联股票HTML
         related_stocks_html = ""
         if item.get("related_stocks"):
             rs = item["related_stocks"]
             stocks_list = rs.get("stocks", [])
-            sector_avg = rs.get("sector_avg_change", 0)
-            sector_dir = rs.get("sector_direction", "震荡")
-            
-            stocks_detail = ""
-            for s in stocks_list:
-                s_change_class = "up" if s["change_pct"] >= 0 else "down"
-                s_sign = "+" if s["change_pct"] >= 0 else ""
-                stocks_detail += f'<div class="stock-item"><span class="stock-name">{s["name"]}</span><span class="stock-change {s_change_class}">{s_sign}{s["change_pct"]:.2f}%</span></div>'
-            
-            avg_class = "up" if sector_avg >= 0 else "down"
-            avg_sign = "+" if sector_avg >= 0 else ""
-            
-            related_stocks_html = f'''
-                <div class="section">
-                    <div class="section-title">📊 关联股票（板块联动）</div>
-                    <div class="sector-avg">板块加权平均: <span class="{avg_class}">{avg_sign}{sector_avg:.2f}%</span> | 情绪: {sector_dir}</div>
-                    <div class="stocks-list">
-                        {stocks_detail}
-                    </div>
-                </div>
-            '''
         
         card_html = f'''
         <div class="card">
@@ -187,10 +235,33 @@ def generate_html():
                     <div class="sector-info">{sector_perf}</div>
                 </div>
                 {related_stocks_html}
+                {news_html}
+                {percentile_html}
             </div>
         </div>
         '''
         cards_html += card_html
+    
+    # 生成宏观数据摘要HTML - 新增
+    macro_summary_html = ""
+    try:
+        macro_file = DATA_DIR / f"macro_{date_str.replace('-', '')}.json"
+        if macro_file.exists():
+            with open(macro_file, "r", encoding="utf-8") as f:
+                macro_data = json.load(f)
+            indicators = macro_data.get("indicators", [])
+            if indicators:
+                macro_items = ""
+                for ind in indicators[:6]:
+                    macro_items += f'<span class="macro-item">{ind["name"]}: {ind["value"]} ({ind["trend"]})</span>'
+                macro_summary_html = f'''
+                <div class="macro-summary">
+                    <div class="macro-summary-title">📊 宏观环境速览</div>
+                    <div>{macro_items}</div>
+                </div>
+                '''
+    except Exception as e:
+        print(f"[WARN] 宏观数据加载失败: {e}")
     
     # 完整HTML
     html = f'''<!DOCTYPE html>
@@ -578,6 +649,109 @@ def generate_html():
             color: {visual["down_color"]};
         }}
         
+        /* 新闻舆情样式 */
+        .sentiment-bar {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(31, 111, 235, 0.05);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }}
+        
+        .sentiment-label {{
+            color: #c9d1d9;
+        }}
+        
+        .sentiment-count {{
+            color: #8b949e;
+            font-size: 12px;
+        }}
+        
+        .news-item {{
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #8b949e;
+            border-bottom: 1px solid #21262d;
+        }}
+        
+        .news-item:last-child {{
+            border-bottom: none;
+        }}
+        
+        /* 历史分位样式 */
+        .percentile-grid {{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 8px;
+        }}
+        
+        .percentile-item {{
+            text-align: center;
+            padding: 10px;
+            background: #0d1117;
+            border-radius: 8px;
+        }}
+        
+        .p-label {{
+            display: block;
+            font-size: 11px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }}
+        
+        .p-value {{
+            font-size: 15px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }}
+        
+        .p-value.up {{
+            color: {visual["up_color"]};
+        }}
+        
+        .p-value.down {{
+            color: {visual["down_color"]};
+        }}
+        
+        .p-value.neutral {{
+            color: #8b949e;
+        }}
+        
+        .percentile-summary {{
+            font-size: 12px;
+            color: #8b949e;
+            padding: 8px 0;
+            text-align: center;
+        }}
+        
+        /* 宏观数据摘要 */
+        .macro-summary {{
+            background: rgba(31, 111, 235, 0.1);
+            border: 1px solid rgba(31, 111, 235, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #c9d1d9;
+        }}
+        
+        .macro-summary-title {{
+            font-weight: 600;
+            color: {visual["sector_color"]};
+            margin-bottom: 6px;
+            font-size: 12px;
+        }}
+        
+        .macro-item {{
+            display: inline-block;
+            margin-right: 16px;
+            margin-bottom: 4px;
+        }}
+        
         footer {{
             text-align: center;
             padding: 30px 0;
@@ -625,6 +799,19 @@ def generate_html():
             .sector-avg {{ font-size: 13px; padding: 6px 10px; }}
             .stocks-list {{ grid-template-columns: repeat(2, 1fr); gap: 6px; }}
             .stock-item {{ padding: 6px 10px; font-size: 12px; }}
+            /* 移动端新闻舆情适配 */
+            .sentiment-bar {{ flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px 10px; }}
+            .news-item {{ font-size: 11px; padding: 4px 10px; }}
+            /* 移动端历史分位适配 */
+            .percentile-grid {{ grid-template-columns: repeat(3, 1fr); gap: 6px; }}
+            .percentile-item {{ padding: 6px; }}
+            .p-label {{ font-size: 10px; }}
+            .p-value {{ font-size: 12px; }}
+            .percentile-summary {{ font-size: 11px; }}
+            /* 移动端宏观摘要适配 */
+            .macro-summary {{ padding: 8px 12px; margin-bottom: 12px; }}
+            .macro-summary-title {{ font-size: 11px; }}
+            .macro-item {{ display: block; margin-right: 0; margin-bottom: 2px; font-size: 11px; }}
             footer {{ padding: 12px 0; margin-top: 12px; font-size: 11px; }}
         }}
     </style>
@@ -640,6 +827,8 @@ def generate_html():
             <button class="btn" onclick="expandAll()">展开全部</button>
             <button class="btn" onclick="collapseAll()">收起全部</button>
         </div>
+        
+        {macro_summary_html}
         
         <div class="filter-bar">
             <button class="filter-btn active" onclick="filterSector('all')">全部</button>

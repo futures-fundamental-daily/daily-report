@@ -160,7 +160,11 @@ def push_to_feishu():
                          key=lambda x: x["quote"]["change_pct"], reverse=True)[:3]
     top_score = sorted(analysis, key=lambda x: x["score"], reverse=True)[:3]
     
-    lines = [f"📊 期货基本面日报 | {date_str} 开盘前", ""]
+    lines = [f"📊 期货基本面日报 | {date_str} 收盘后", ""]
+    
+    lines.append("⏳ 网页版已推送至GitHub，约1-3分钟后部署完成")
+    lines.append(f"🔗 查看地址：https://futures-fundamental-daily.github.io/daily-report/")
+    lines.append("")
     
     lines.append("🔥 涨幅领先")
     for item in top_gainers:
@@ -217,11 +221,11 @@ def push_to_feishu():
 
 
 def push_all():
-    """全渠道推送：GitHub + 飞书"""
-    try:
-        push_to_github()
-    except Exception as e:
-        print(f"[WARN] GitHub推送失败（不影响飞书）: {e}")
+    """全渠道推送：GitHub → 飞书（严格顺序，GitHub失败则飞书中止）"""
+    # 先确保GitHub推送成功，失败则直接抛出异常阻止飞书
+    push_to_github()
+    
+    # GitHub成功后，再推送飞书
     try:
         push_to_feishu()
     except Exception as e:
