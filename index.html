@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>期货基本面日报 | 2026-07-14</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: #f0f6fc;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #8b949e;
+            font-size: 14px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            border: 1px solid #30363d;
+            background: #21262d;
+            color: #c9d1d9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #30363d;
+            border-color: #8b949e;
+        }
+        
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 6px 14px;
+            border: 1px solid #30363d;
+            background: transparent;
+            color: #8b949e;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #1f6feb;
+            color: #fff;
+            border-color: #1f6feb;
+        }
+        
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        
+        .card:hover {
+            border-color: #484f58;
+        }
+        
+        .card-header {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stars {
+            color: #f0883e;
+            font-size: 16px;
+        }
+        
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f0f6fc;
+        }
+        
+        .score {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f0883e;
+        }
+        
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .tag.direction-bull {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+        
+        .tag.direction-bear {
+            background: rgba(63, 185, 80, 0.2);
+            color: #3fb950;
+        }
+        
+        .tag.direction-neutral {
+            background: rgba(139, 148, 158, 0.2);
+            color: #8b949e;
+        }
+        
+        .tag.sector {
+            background: rgba(31, 111, 235, 0.2);
+            color: #1f6feb;
+        }
+        
+        .card-quote {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .price {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f0f6fc;
+        }
+        
+        .change {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .change.up {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff4444;
+        }
+        
+        .change.down {
+            background: rgba(63, 185, 80, 0.15);
+            color: #3fb950;
+        }
+        
+        .card-body {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .card.expanded .card-body {
+            padding: 0 20px 20px;
+            max-height: 2000px;
+        }
+        
+        .card-header::after {
+            content: "▼";
+            font-size: 12px;
+            color: #8b949e;
+            transition: transform 0.2s;
+        }
+        
+        .card.expanded .card-header::after {
+            transform: rotate(180deg);
+        }
+        
+        .quick-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 16px;
+        }
+        
+        .info-row {
+            text-align: center;
+        }
+        
+        .info-label {
+            display: block;
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f0f6fc;
+        }
+        
+        .info-value.stop {
+            color: #d29922;
+        }
+        
+        .summary {
+            background: rgba(31, 111, 235, 0.1);
+            border-left: 3px solid #1f6feb;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+        
+        .section {
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #8b949e;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .logic-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #21262d;
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+        
+        .logic-item:last-child {
+            border-bottom: none;
+        }
+        
+        .risk-section .section-title {
+            color: #d29922;
+        }
+        
+        .risk-item {
+            padding: 8px 12px;
+            background: rgba(210, 153, 34, 0.1);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #d29922;
+        }
+        
+        .quant-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .quant-item {
+            text-align: center;
+            padding: 12px;
+            background: #0d1117;
+            border-radius: 8px;
+        }
+        
+        .quant-label {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+        
+        .quant-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+        
+        .quant-value.up {
+            color: #ff4444;
+        }
+        
+        .quant-value.down {
+            color: #3fb950;
+        }
+        
+        .sector-info {
+            font-size: 14px;
+            color: #c9d1d9;
+            padding: 8px 0;
+        }
+        
+        .sector-avg {
+            font-size: 14px;
+            color: #c9d1d9;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(31, 111, 235, 0.05);
+            border-radius: 6px;
+        }
+        
+        .stocks-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+        }
+        
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #0d1117;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .stock-name {
+            color: #c9d1d9;
+        }
+        
+        .stock-change {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .stock-change.up {
+            color: #ff4444;
+        }
+        
+        .stock-change.down {
+            color: #3fb950;
+        }
+        
+        /* 新闻舆情样式 */
+        .sentiment-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(31, 111, 235, 0.05);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .sentiment-label {
+            color: #c9d1d9;
+        }
+        
+        .sentiment-count {
+            color: #8b949e;
+            font-size: 12px;
+        }
+        
+        .news-item {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #8b949e;
+            border-bottom: 1px solid #21262d;
+        }
+        
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 历史分位样式 */
+        .percentile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .percentile-item {
+            text-align: center;
+            padding: 10px;
+            background: #0d1117;
+            border-radius: 8px;
+        }
+        
+        .p-label {
+            display: block;
+            font-size: 11px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+        
+        .p-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+        
+        .p-value.up {
+            color: #ff4444;
+        }
+        
+        .p-value.down {
+            color: #3fb950;
+        }
+        
+        .p-value.neutral {
+            color: #8b949e;
+        }
+        
+        .percentile-summary {
+            font-size: 12px;
+            color: #8b949e;
+            padding: 8px 0;
+            text-align: center;
+        }
+        
+        /* 宏观数据摘要 */
+        .macro-summary {
+            background: rgba(31, 111, 235, 0.1);
+            border: 1px solid rgba(31, 111, 235, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #c9d1d9;
+        }
+        
+        .macro-summary-title {
+            font-weight: 600;
+            color: #1f6feb;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        
+        .macro-item {
+            display: inline-block;
+            margin-right: 16px;
+            margin-bottom: 4px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #484f58;
+            font-size: 12px;
+            border-top: 1px solid #30363d;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 600px) {
+            .container { padding: 12px; }
+            header { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; padding: 8px 0; margin-bottom: 8px; border-bottom: 1px solid #30363d; }
+            h1 { font-size: 15px; margin: 0; margin-right: 8px; white-space: nowrap; flex-shrink: 0; }
+            .subtitle { font-size: 11px; color: #8b949e; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .controls { display: none; }
+            .filter-bar { display: none; }
+            .cards-container { margin-top: 0; }
+            .card { margin-bottom: 10px; border-radius: 8px; }
+            .card-header { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 6px; }
+            .card-header::after { align-self: flex-end; margin-top: -20px; }
+            .card-title { gap: 6px; }
+            .stars { font-size: 14px; }
+            .product-name { font-size: 14px; }
+            .score { font-size: 16px; }
+            .card-tags { gap: 4px; }
+            .tag { padding: 2px 8px; font-size: 11px; }
+            .card-quote { gap: 6px; }
+            .price { font-size: 16px; }
+            .change { font-size: 13px; padding: 1px 6px; }
+            .card-body { padding: 0 12px; }
+            .card.expanded .card-body { padding: 0 12px 12px; }
+            .quick-info { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 0; margin-bottom: 10px; }
+            .info-label { font-size: 11px; }
+            .info-value { font-size: 13px; }
+            .summary { padding: 8px 12px; font-size: 13px; margin-bottom: 10px; }
+            .section { margin-bottom: 10px; }
+            .section-title { font-size: 12px; margin-bottom: 6px; }
+            .logic-item { padding: 6px 0; font-size: 13px; }
+            .risk-item { padding: 6px 10px; font-size: 12px; margin-bottom: 4px; }
+            .quant-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .quant-item { padding: 8px; }
+            .quant-label { font-size: 11px; }
+            .quant-value { font-size: 14px; }
+            .sector-info { font-size: 13px; }
+            .sector-avg { font-size: 13px; padding: 6px 10px; }
+            .stocks-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .stock-item { padding: 6px 10px; font-size: 12px; }
+            /* 移动端新闻舆情适配 */
+            .sentiment-bar { flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px 10px; }
+            .news-item { font-size: 11px; padding: 4px 10px; }
+            /* 移动端历史分位适配 */
+            .percentile-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .percentile-item { padding: 6px; }
+            .p-label { font-size: 10px; }
+            .p-value { font-size: 12px; }
+            .percentile-summary { font-size: 11px; }
+            /* 移动端宏观摘要适配 */
+            .macro-summary { padding: 8px 12px; margin-bottom: 12px; }
+            .macro-summary-title { font-size: 11px; }
+            .macro-item { display: block; margin-right: 0; margin-bottom: 2px; font-size: 11px; }
+            footer { padding: 12px 0; margin-top: 12px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>期货基本面日报</h1>
+            <div class="subtitle">2026-07-14 03:45 | 基于多维度量化分析</div>
+        </header>
+        
+        <div class="controls">
+            <button class="btn" onclick="expandAll()">展开全部</button>
+            <button class="btn" onclick="collapseAll()">收起全部</button>
+        </div>
+        
+        
+                <div class="macro-summary">
+                    <div class="macro-summary-title">📊 宏观环境速览</div>
+                    <div><span class="macro-item">USD/CNY: 6.7845 (稳定)</span></div>
+                </div>
+                
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterSector('all')">全部</button>
+            <button class="filter-btn" onclick="filterSector('新能源')">新能源</button>
+            <button class="filter-btn" onclick="filterSector('农产品')">农产品</button>
+            <button class="filter-btn" onclick="filterSector('有色金属')">有色金属</button>
+            <button class="filter-btn" onclick="filterSector('黑色系')">黑色系</button>
+            <button class="filter-btn" onclick="filterSector('能源化工')">能源化工</button>
+        </div>
+        
+        <div class="cards-container">
+            
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★★</span>
+                    <span class="product-name">纯碱 SA</span>
+                    <span class="score">8.0/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">能源化工</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:高</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">2293.06</span>
+                    <span class="change up">+4.23%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">2259-2305</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">2201</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">加速上涨</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 纯碱：加速上涨，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日大涨4.2%，短期动能较强</div><div class="logic-item">基本面：新产能持续投放，供应压力较大</div><div class="logic-item">成交活跃（358万手），资金参与度较高</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 产能过剩格局未改</div><div class="risk-item">⚠️ 成本支撑下移</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">5.77%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">11.49%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">5.29%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">能源化工板块今日整体强势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">棕榈油 P</span>
+                    <span class="score">7.3/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">农产品</span>
+                    <span class="tag">短期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">7878.00</span>
+                    <span class="change up">+1.44%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">7760-7917</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">7563</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和上涨</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 棕榈油：温和上涨，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动1.4%，走势相对平稳</div><div class="logic-item">基本面：马棕产量恢复，但出口强劲</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 产量季节性回升</div><div class="risk-item">⚠️ 豆棕价差压制</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">2.31%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">5.71%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">2.09%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">农产品板块今日整体强势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">菜粕 RM</span>
+                    <span class="score">7.1/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-bull">看多</span>
+                    <span class="tag sector">农产品</span>
+                    <span class="tag">短期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">2479.00</span>
+                    <span class="change up">+1.56%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">2442-2491</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">2380</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和上涨</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 菜粕：温和上涨，建议偏多思路
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动1.6%，走势相对平稳</div><div class="logic-item">基本面：菜籽到港量增加，库存回升</div><div class="logic-item">成交活跃（493万手），资金参与度较高</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 天气炒作结束后回落风险</div><div class="risk-item">⚠️ 豆粕替代效应</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">2.00%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">5.57%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">2.11%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">农产品板块今日整体强势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">铅 PB</span>
+                    <span class="score">6.9/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">有色金属</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">19885.00</span>
+                    <span class="change up">+0.84%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">19686-20084</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">18891</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">横盘震荡</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 铅：横盘震荡，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动0.8%，走势相对平稳</div><div class="logic-item">基本面：原生铅供应偏紧，再生铅利润承压</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 电池回收政策不确定性</div><div class="risk-item">⚠️ 淡季需求转弱</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">1.62%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">1.79%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">0.93%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">有色金属板块今日整体震荡</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★★☆</span>
+                    <span class="product-name">铜 CU</span>
+                    <span class="score">6.0/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">有色金属</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">78500.00</span>
+                    <span class="change down">-1.08%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">77715-79285</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">74575</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 铜：温和下跌，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.1%，走势相对平稳</div><div class="logic-item">基本面：铜矿供应扰动频繁，精铜库存低位</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 价格处于历史高位区间</div><div class="risk-item">⚠️ 海外经济放缓</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-1.18%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-3.12%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">1.31%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">有色金属板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★☆☆</span>
+                    <span class="product-name">多晶硅 PS</span>
+                    <span class="score">5.9/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">新能源</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">37038.60</span>
+                    <span class="change down">-2.53%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">36668-37409</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">35187</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 多晶硅：温和下跌，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日大跌-2.5%，短期动能偏弱</div><div class="logic-item">基本面：供需双弱，库存低位</div><div class="logic-item">舆情：近24小时2条相关新闻，整体情绪乐观</div><div class="logic-item">成交活跃（266万手），资金参与度较高</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 产能过剩背景未根本改变</div><div class="risk-item">⚠️ 价格处于反弹阶段</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-1.87%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-4.31%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">2.80%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">新能源板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="up">乐观</span></span>
+                        <span class="sentiment-count">相关新闻: 2条</span>
+                    </div>
+                    <div class="news-item">📈 立昂微：预计2026年上半年净利润8500万元左右，同比扭亏为盈...</div><div class="news-item">📈 广期所发布关于多晶硅期货PS2707合约、碳酸锂期货LC2707合约有关事项的公...</div>
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★☆☆</span>
+                    <span class="product-name">豆粕 M</span>
+                    <span class="score">5.9/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">农产品</span>
+                    <span class="tag">短期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">3111.00</span>
+                    <span class="change up">+0.58%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">3080-3142</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">2955</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">横盘震荡</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 豆粕：横盘震荡，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动0.6%，走势相对平稳</div><div class="logic-item">基本面：美豆种植面积超预期，但生长期天气仍有不确定性</div><div class="logic-item">成交活跃（217万手），资金参与度较高</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 美豆主产区天气</div><div class="risk-item">⚠️ 生猪存栏恢复情况</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value up">0.34%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value up">1.87%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">0.62%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">农产品板块今日整体震荡</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★☆☆</span>
+                    <span class="product-name">原油 SC</span>
+                    <span class="score">5.3/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">能源化工</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">606.60</span>
+                    <span class="change down">-1.40%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">601-613</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">576</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 原油：温和下跌，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.4%，走势相对平稳</div><div class="logic-item">基本面：OPEC+延长减产，但需求端担忧仍存</div><div class="logic-item">舆情：近24小时6条相关新闻，整体情绪中性</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 全球经济放缓拖累需求</div><div class="risk-item">⚠️ 美元走强</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-1.88%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-3.80%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">1.20%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">能源化工板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 6条</span>
+                    </div>
+                    <div class="news-item">➡️ 特朗普：美国将对通过霍尔木兹海峡的货物收取20%的“费用补偿”...</div><div class="news-item">➡️ ...</div>
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★☆☆</span>
+                    <span class="product-name">螺纹钢 RB</span>
+                    <span class="score">5.0/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">黑色系</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:低</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">3487.00</span>
+                    <span class="change down">-1.52%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">3452-3522</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">3313</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 螺纹钢：温和下跌，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日波动-1.5%，走势相对平稳</div><div class="logic-item">基本面：钢材表需季节性回落，库存累积</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 淡季累库超预期</div><div class="risk-item">⚠️ 粗钢平控政策执行力度</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-2.39%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-4.43%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">2.24%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">黑色系板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="neutral">中性</span></span>
+                        <span class="sentiment-count">相关新闻: 0条</span>
+                    </div>
+                    
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <div class="card-title">
+                    <span class="stars">★☆☆</span>
+                    <span class="product-name">铁矿石 I</span>
+                    <span class="score">4.2/10</span>
+                </div>
+                <div class="card-tags">
+                    <span class="tag direction-neutral">中性</span>
+                    <span class="tag sector">黑色系</span>
+                    <span class="tag">中期</span>
+                    <span class="tag">置信度:中</span>
+                </div>
+                <div class="card-quote">
+                    <span class="price">805.00</span>
+                    <span class="change down">-2.66%</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="quick-info">
+                    <div class="info-row">
+                        <span class="info-label">入场区间</span>
+                        <span class="info-value">797-813</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">止损位</span>
+                        <span class="info-value stop">765</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">动量</span>
+                        <span class="info-value">温和下跌</span>
+                    </div>
+                </div>
+                <div class="summary">
+                    💡 铁矿石：温和下跌，建议观望
+                </div>
+                <div class="section">
+                    <div class="section-title">AI分析逻辑</div>
+                    <div class="logic-item">价格处于近1年极低分位（0%），估值安全边际较高</div><div class="logic-item">今日大跌-2.7%，短期动能偏弱</div><div class="logic-item">基本面：铁矿发运高位，港口库存累积</div><div class="logic-item">舆情：近24小时1条相关新闻，整体情绪悲观</div>
+                </div>
+                <div class="section risk-section">
+                    <div class="section-title">⚠️ 风险提示</div>
+                    <div class="risk-item">⚠️ 发运量回升</div><div class="risk-item">⚠️ 终端需求不及预期</div>
+                </div>
+                <div class="section">
+                    <div class="section-title">📈 量化数据</div>
+                    <div class="quant-grid">
+                        <div class="quant-item">
+                            <div class="quant-label">近5日涨跌</div>
+                            <div class="quant-value down">-1.43%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">近20日涨跌</div>
+                            <div class="quant-value down">-6.17%</div>
+                        </div>
+                        <div class="quant-item">
+                            <div class="quant-label">波动率</div>
+                            <div class="quant-value">3.26%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">🌍 板块与产区</div>
+                    <div class="sector-info">黑色系板块今日整体弱势</div>
+                </div>
+                
+                
+                <div class="section">
+                    <div class="section-title">📰 舆情监控（近24h）</div>
+                    <div class="sentiment-bar">
+                        <span class="sentiment-label">情绪: <span class="down">悲观</span></span>
+                        <span class="sentiment-count">相关新闻: 1条</span>
+                    </div>
+                    <div class="news-item">📉 特朗普宣布停火协议结束，称：同意继续与伊朗对话...</div>
+                </div>
+            
+                
+                <div class="section">
+                    <div class="section-title">📊 历史价格分位</div>
+                    <div class="percentile-grid">
+                        
+                <div class="percentile-item">
+                    <span class="p-label">近1年分位</span>
+                    <span class="p-value">0.0%</span>
+                </div>
+            
+                    </div>
+                    <div class="percentile-summary">近1年分位 0%</div>
+                </div>
+            
+            </div>
+        </div>
+        
+        </div>
+        
+        <footer>
+            <p>⚠️ 本报告基于公开信息整理，仅供参考，不构成投资建议。</p>
+            <p>数据更新时间：2026-07-14 03:45</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleCard(header) {
+            const card = header.parentElement;
+            card.classList.toggle('expanded');
+        }
+        
+        function expandAll() {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.add('expanded');
+            });
+        }
+        
+        function collapseAll() {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('expanded');
+            });
+        }
+        
+        function filterSector(sector) {
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === (sector === 'all' ? '全部' : sector)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 过滤卡片
+            document.querySelectorAll('.card').forEach(card => {
+                if (sector === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const cardSector = card.querySelector('.tag.sector');
+                    if (cardSector && cardSector.textContent === sector) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
