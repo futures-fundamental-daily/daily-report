@@ -82,6 +82,22 @@
     "retry_times": 3,
     "retry_interval_minutes": 5
   },
+  "data_guardian": {
+    "enabled": true,
+    "alert_channels": ["feishu"],
+    "thresholds": {
+      "stale_single_warn": 3,
+      "stale_consecutive_critical": 2,
+      "mass_failure_ratio": 0.5,
+      "pipeline_abort_ratio": 0.7
+    },
+    "cooldown_hours": {
+      "warning": 24,
+      "critical": 6,
+      "consecutive_stale": 12
+    },
+    "check_fields": ["close", "change_pct", "volume", "open_interest"]
+  },
   "visual": {
     "bg_color": "#0d1117",
     "card_bg": "#161b22",

@@ -1,0 +1,17 @@
+{
+  "summary": {
+    "date": "2026-07-16",
+    "total": 10,
+    "stale_single": 0,
+    "stale_consecutive": 0,
+    "frozen": 0,
+    "mock_fallback": 0,
+    "healthy": 10
+  },
+  "stale_single": [],
+  "stale_consecutive": [],
+  "frozen": [],
+  "mock_fallback": [],
+  "alerts_sent": [],
+  "checked_at": "2026-07-16T10:04:37.272732"
+}

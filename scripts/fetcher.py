@@ -27,6 +27,12 @@ AKSHARE_MARKET_MAP = {
     "M": "CF", "I": "CF", "CU": "CF", "P": "CF", "SA": "CF",
 }
 
+# 新浪期货代码映射（备用）
+SINA_CODE_MAP = {
+    "PS": "PS0", "RM": "RM0", "PB": "PB0", "RB": "RB0", "SC": "SC0",
+    "M": "M0", "I": "I0", "CU": "CU0", "P": "P0", "SA": "SA0",
+}
+
 
 def load_config():
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
@@ -245,6 +251,16 @@ def fetch_all_quotes():
     print(f"  成功获取 {len(results)}/{len(products)} 个品种")
     if stale_codes:
         print(f"  ⚠⚠⚠ 以下品种数据与昨日完全相同，可能存在数据源问题: {', '.join(stale_codes)}")
+    
+    # ===== 数据守护者检查 =====
+    try:
+        sys.path.insert(0, str(BASE_DIR / "scripts"))
+        from data_guardian import run_guardian_check
+        guardian_report = run_guardian_check(results, products)
+        if guardian_report.get("alerts_sent"):
+            print(f"  🚨 数据守护者已发送 {len(guardian_report['alerts_sent'])} 条报警")
+    except Exception as e:
+        print(f"[WARN] 数据守护者检查失败: {e}")
     
     return results
 

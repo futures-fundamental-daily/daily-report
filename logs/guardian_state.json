@@ -1,0 +1,9 @@
+{
+  "last_alert_hashes": {
+    "mass_failure_2026-07-16": "2026-07-16T10:04:36.439119",
+    "stale_single_2026-07-16": "2026-07-16T10:04:37.271389"
+  },
+  "data_source_health": {},
+  "consecutive_stale": {},
+  "version": "1.0"
+}

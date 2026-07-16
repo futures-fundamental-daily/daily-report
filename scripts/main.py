@@ -20,7 +20,7 @@ from generator import generate_html
 from pusher import push_all, push_local
 
 
-def run_pipeline(mock=False, local=False):
+def run_pipeline(mock=False, local=False, skip_guardian=False):
     """执行完整流水线"""
     print("=" * 60)
     print("期货基本面日报 - 生成流水线")
@@ -32,7 +32,38 @@ def run_pipeline(mock=False, local=False):
         fetch_mock_data()
     else:
         print("\n[1/6] 抓取行情数据...")
-        fetch_all_quotes()
+        quotes = fetch_all_quotes()
+    
+    # 1.5 数据质量检查（守护者）
+    if not mock and not skip_guardian:
+        print("\n[1.5/6] 数据质量检查...")
+        try:
+            import sys
+            from pathlib import Path
+            BASE_DIR = Path(__file__).parent.parent
+            sys.path.insert(0, str(BASE_DIR / "scripts"))
+            from data_guardian import run_guardian_check, load_config
+            config = load_config()
+            products = config["products"]
+            report = run_guardian_check(quotes, products)
+            summary = report.get("summary", {})
+            total = summary.get("total", 10)
+            healthy = summary.get("healthy", 0)
+            stale = summary.get("stale_single", 0)
+            mock_cnt = summary.get("mock_fallback", 0)
+            
+            print(f"  数据健康度: {healthy}/{total}")
+            
+            # 如果超过70%数据异常，中止流水线
+            bad_ratio = (stale + mock_cnt) / total if total else 0
+            if bad_ratio >= 0.7:
+                print(f"\n🚨 CRITICAL: {bad_ratio*100:.0f}% 品种数据异常，中止流水线")
+                print("  请检查数据源后再试。")
+                return
+            elif bad_ratio >= 0.5:
+                print(f"\n⚠️ WARNING: {bad_ratio*100:.0f}% 品种数据异常，继续但请注意")
+        except Exception as e:
+            print(f"[WARN] 数据质量检查失败: {e}")
     
     # 2. 新闻情绪分析
     print("\n[2/6] 抓取新闻舆情...")
@@ -71,5 +102,6 @@ def run_pipeline(mock=False, local=False):
 if __name__ == "__main__":
     mock_mode = "--mock" in sys.argv
     local_mode = "--local" in sys.argv
+    skip_guardian = "--skip-guardian" in sys.argv
     
-    run_pipeline(mock=mock_mode, local=local_mode)
+    run_pipeline(mock=mock_mode, local=local_mode, skip_guardian=skip_guardian)
