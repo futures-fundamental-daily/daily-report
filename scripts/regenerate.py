@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""重新生成指定日期的期货日报HTML"""
+"""重新生成指定日期的HTML报告"""
 import json
 import shutil
 from datetime import datetime
 from pathlib import Path
 import sys
+import subprocess
 
 BASE_DIR = Path(__file__).parent.parent
 ANALYSIS_DIR = BASE_DIR / "analysis"
@@ -12,56 +13,49 @@ DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
 
 sys.path.insert(0, str(BASE_DIR / "scripts"))
-from generator import generate_html, load_analysis, get_direction_class
 
-# 从现有分析文件读取日期
+# 使用 unittest.mock 来 patch datetime.now
+from unittest.mock import patch
+
+import generator
+import build_index
+
 for date_str in ["20260714", "20260715"]:
-    print(f"\n=== 重新生成 {date_str} 的报告 ===")
+    d = datetime.strptime(date_str, "%Y%m%d")
+    fake_now = datetime(d.year, d.month, d.day, 16, 30)
     
-    try:
-        analysis_data = load_analysis(date_str)
-    except FileNotFoundError:
-        print(f"[ERROR] 分析数据不存在: {date_str}")
-        continue
+    print(f"\n=== 重新生成 {d.strftime('%Y-%m-%d')} 的报告 ===")
     
-    # 读取对应的quotes和macro数据
-    quotes_file = DATA_DIR / f"quotes_{date_str}.json"
-    macro_file = DATA_DIR / f"macro_{date_str}.json"
-    
-    # 手动生成HTML（hack方式：临时替换datetime.now）
-    import generator
-    original_now = datetime.now
-    
-    # 构造假时间
-    fake_date = datetime.strptime(date_str, "%Y%m%d")
-    fake_time = datetime(fake_date.year, fake_date.month, fake_date.day, 16, 30)
-    
-    def fake_datetime_now():
-        return fake_time
-    
-    datetime.now = fake_datetime_now
-    
-    try:
-        # 重新加载模块以应用hack
+    # patch datetime.now
+    with patch('datetime.datetime') as mock_datetime:
+        mock_datetime.now.return_value = fake_now
+        mock_datetime.strftime = datetime.strftime
+        mock_datetime.strptime = datetime.strptime
+        mock_datetime.__name__ = 'datetime'
+        
+        # 重新加载generator以应用patch
         import importlib
         importlib.reload(generator)
         
-        # 生成HTML
-        output_file = generator.generate_html()
-        
-        # 归档
-        date_fmt = fake_date.strftime("%Y-%m-%d")
-        archive_file = BASE_DIR / "archive" / f"{date_fmt}.html"
-        shutil.copy2(output_file, archive_file)
-        
-        print(f"  ✓ 已生成: {output_file}")
-        print(f"  ✓ 已归档: {archive_file}")
-    except Exception as e:
-        print(f"[ERROR] 生成失败: {e}")
-    finally:
-        datetime.now = original_now
+        try:
+            output_file = generator.generate_html()
+            
+            # 归档
+            archive_file = BASE_DIR / "archive" / f"{d.strftime('%Y-%m-%d')}.html"
+            shutil.copy2(output_file, archive_file)
+            
+            print(f"  ✓ 已生成: {output_file}")
+            print(f"  ✓ 已归档: {archive_file}")
+        except Exception as e:
+            print(f"[ERROR] 生成失败: {e}")
 
 print("\n=== 更新 report_index.json ===")
-from build_index import build_index
-build_index()
+importlib.reload(build_index)
+build_index.build_index()
 print("  ✓ 索引已更新")
+
+print("\n=== 推送到 GitHub ===")
+subprocess.run(["git", "add", "-A"], cwd=BASE_DIR, check=True)
+subprocess.run(["git", "commit", "-m", f"daily: regenerate 2026-07-14 & 2026-07-15"], cwd=BASE_DIR, check=True)
+subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, check=True)
+print("  ✓ 已推送")
