@@ -72,7 +72,7 @@ def push_to_github():
         shutil.copy2(src, dst)
     
     # 添加文件
-    subprocess.run(["git", "add", "index.html", "archive/", "config.json"], cwd=BASE_DIR)
+    subprocess.run(["git", "add", "index.html", "archive/", "config.json", "report_index.json"], cwd=BASE_DIR)
     
     # 提交
     try:

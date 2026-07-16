@@ -1,14 +1,14 @@
 {
   "version": "v2.0",
-  "updated": "2026-07-15 16:30:08",
+  "updated": "2026-07-15 18:39:17",
   "reports": [
     {
       "date": "2026-07-15",
       "filename": "2026-07-15.html",
       "title": "期货基本面日报 2026-07-15",
-      "top_gainer": "菜粕(RM) +1.56%",
-      "top_score": "菜粕(RM) 7.5分",
-      "direction": "跌多涨少",
+      "top_gainer": "原油(SC) +3.80%",
+      "top_score": "原油(SC) 8.2分",
+      "direction": "涨多跌少",
       "sectors": [
         "农产品",
         "新能源",
@@ -16,8 +16,8 @@
         "能源化工",
         "黑色系"
       ],
-      "up_count": 4,
-      "down_count": 6
+      "up_count": 7,
+      "down_count": 3
     },
     {
       "date": "2026-07-14",

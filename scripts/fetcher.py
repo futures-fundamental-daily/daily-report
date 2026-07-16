@@ -20,24 +20,11 @@ HEADERS = {
     "Referer": "https://finance.sina.com.cn"
 }
 
-# 品种代码映射：期货代码 -> 新浪连续合约代码
-SINA_CODE_MAP = {
-    "PS": None,       # 多晶硅：新浪暂无数据，用akshare
-    "RM": "RM0",      # 菜粕连续
-    "PB": "PB0",      # 沪铅连续
-    "RB": "RB0",      # 螺纹钢连续
-    "SC": "SC0",      # 原油连续
-    "M": "M0",        # 豆粕连续
-    "I": "I0",        # 铁矿石连续
-    "CU": "CU0",      # 沪铜连续
-    "P": "P0",        # 棕榈油连续
-    "SA": None,       # 纯碱：新浪暂无数据，用akshare
-}
-
-# akshare 市场代码映射
+# 新浪API已确认返回2024-07-17的历史快照数据，不再使用
+# 全部品种统一使用 akshare 的 CF 市场代码获取
 AKSHARE_MARKET_MAP = {
-    "PS": "CF",  # 广期所品种在akshare中用CF市场代码
-    "SA": "CF",  # 郑商所
+    "PS": "CF", "RM": "CF", "PB": "CF", "RB": "CF", "SC": "CF",
+    "M": "CF", "I": "CF", "CU": "CF", "P": "CF", "SA": "CF",
 }
 
 
@@ -106,7 +93,7 @@ def fetch_sina_futures(code):
 
 
 def fetch_akshare_futures(code):
-    """通过akshare获取期货行情（备用）"""
+    """通过akshare获取期货行情（主数据源）"""
     market = AKSHARE_MARKET_MAP.get(code)
     if not market:
         return None
@@ -136,6 +123,33 @@ def fetch_akshare_futures(code):
     except Exception as e:
         print(f"[WARN] akshare {code}0 获取失败: {e}")
         return None
+
+
+def _is_stale_data(data, prev_data):
+    """检测数据是否与昨天完全相同（陈旧数据）"""
+    if not prev_data:
+        return False
+    keys = ["close", "volume", "open_interest"]
+    for k in keys:
+        if data.get(k) != prev_data.get(k):
+            return False
+    return True
+
+
+def _load_prev_quotes():
+    """加载上一个交易日的数据"""
+    now = datetime.now()
+    # 尝试昨天
+    for days_back in [1, 2, 3]:
+        prev_date = (now - timedelta(days=days_back)).strftime("%Y%m%d")
+        prev_file = DATA_DIR / f"quotes_{prev_date}.json"
+        if prev_file.exists():
+            try:
+                with open(prev_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    return None
 
 
 def fetch_tencent_stock(stock_code):
@@ -180,25 +194,29 @@ def fetch_all_quotes():
     
     print(f"[{datetime.now()}] 开始抓取期货行情数据...")
     
+    # 加载昨日数据用于陈旧检测
+    prev_quotes = _load_prev_quotes()
+    
     results = {}
+    stale_codes = []
+    
     for p in products:
         code = p["code"]
         
-        # 第1步：尝试新浪API
-        data = fetch_sina_futures(code)
-        if data:
-            results[code] = data
-            print(f"  ✓ {code} ({p['name']}) 新浪API: {data['close']:.2f} ({data['change_pct']:+.2f}%)")
-            continue
-        
-        # 第2步：尝试akshare备用
+        # 第1步：使用 akshare 获取（主数据源）
         data = fetch_akshare_futures(code)
         if data:
-            results[code] = data
-            print(f"  ✓ {code} ({p['name']}) akshare: {data['close']:.2f} ({data['change_pct']:+.2f}%)")
+            # 检测是否和昨天数据完全相同
+            prev_data = prev_quotes.get(code) if prev_quotes else None
+            if prev_data and _is_stale_data(data, prev_data):
+                stale_codes.append(code)
+                print(f"  ⚠ {code} ({p['name']}) akshare 数据与昨日完全相同，疑似陈旧: {data['close']:.2f}")
+            else:
+                results[code] = data
+                print(f"  ✓ {code} ({p['name']}) akshare: {data['close']:.2f} ({data['change_pct']:+.2f}%) vol={data['volume']}")
             continue
         
-        # 第3步：模拟数据兜底（确保品种不缺失）
+        # 第2步：模拟数据兜底（确保品种不缺失）
         base_price = {
             "PS": 38000, "RM": 2800, "PB": 19500, "RB": 3600,
             "SC": 580, "M": 3200, "I": 850, "CU": 78000,
@@ -225,6 +243,8 @@ def fetch_all_quotes():
     
     print(f"[{datetime.now()}] 行情数据已保存: {output_file}")
     print(f"  成功获取 {len(results)}/{len(products)} 个品种")
+    if stale_codes:
+        print(f"  ⚠⚠⚠ 以下品种数据与昨日完全相同，可能存在数据源问题: {', '.join(stale_codes)}")
     
     return results
 
