@@ -1,7 +1,24 @@
 {
   "version": "v2.0",
-  "updated": "2026-07-17 16:30:08",
+  "updated": "2026-07-20 16:30:08",
   "reports": [
+    {
+      "date": "2026-07-20",
+      "filename": "2026-07-20.html",
+      "title": "期货基本面日报 2026-07-20",
+      "top_gainer": "原油(SC) +6.30%",
+      "top_score": "铅(PB) 6.2分",
+      "direction": "涨跌均衡",
+      "sectors": [
+        "农产品",
+        "新能源",
+        "有色金属",
+        "能源化工",
+        "黑色系"
+      ],
+      "up_count": 5,
+      "down_count": 5
+    },
     {
       "date": "2026-07-17",
       "filename": "2026-07-17.html",
