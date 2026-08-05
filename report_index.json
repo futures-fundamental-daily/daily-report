@@ -1,7 +1,24 @@
 {
   "version": "v2.0",
-  "updated": "2026-08-04 16:30:07",
+  "updated": "2026-08-05 16:30:07",
   "reports": [
+    {
+      "date": "2026-08-05",
+      "filename": "2026-08-05.html",
+      "title": "期货基本面日报 2026-08-05",
+      "top_gainer": "铅(PB) +2.77%",
+      "top_score": "纯碱(SA) 6.6分",
+      "direction": "涨多跌少",
+      "sectors": [
+        "农产品",
+        "新能源",
+        "有色金属",
+        "能源化工",
+        "黑色系"
+      ],
+      "up_count": 6,
+      "down_count": 4
+    },
     {
       "date": "2026-08-04",
       "filename": "2026-08-04.html",
